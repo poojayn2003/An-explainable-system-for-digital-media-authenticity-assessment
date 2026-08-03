@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Trustify AI | Explainable Digital Trust Platform</title>
+
+<!-- Fonts -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"/>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+scroll-behavior:smooth;
+}
+
+:root{
+
+--bg:#0d1210;
+--bg2:#151a18;
+--card:#151a18;
+--primary:#b23a1f;
+--primary-dark:#7f2712;
+--secondary:#5c8b81;
+--paper:#eee8db;
+--paper-dim:#d9d2c2;
+--success:#5c8b81;
+--danger:#b23a1f;
+--warning:#b8863f;
+--white:#eee8db;
+--text:#e9e6dd;
+--muted:#8b948d;
+--border:rgba(233,230,221,.10);
+
+}
+
+body{
+
+font-family:'Inter',sans-serif;
+background:linear-gradient(135deg,#0d1210,#0f1512,#12100d);
+color:var(--text);
+overflow-x:hidden;
+
+}
+
+/*=========================
+Animated Background
+==========================*/
+
+body::before{
+
+content:"";
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:
+
+radial-gradient(circle at 20% 20%,rgba(178,58,31,.07),transparent 25%),
+
+radial-gradient(circle at 80% 10%,rgba(92,139,129,.07),transparent 25%),
+
+radial-gradient(circle at 60% 80%,rgba(178,58,31,.05),transparent 30%);
+
+z-index:-3;
+
+animation:bgmove 18s linear infinite;
+
+}
+
+@keyframes bgmove{
+
+0%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-25px);
+}
+
+100%{
+transform:translateY(0px);
+}
+
+}
+
+/* Grid — faint ledger, not neon */
+
+.grid{
+
+position:fixed;
+
+width:100%;
+height:100%;
+
+background-image:
+
+linear-gradient(var(--border) 1px,transparent 1px),
+
+linear-gradient(90deg,var(--border) 1px,transparent 1px);
+
+background-size:45px 45px;
+
+z-index:-2;
+
+mask-image:radial-gradient(circle at center,black 40%,transparent 100%);
+
+}
+
+/*=========================
+Navbar
+==========================*/
+
+nav{
+
+position:fixed;
+
+top:0;
+
+width:100%;
+
+padding:20px 8%;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+background:rgba(13,18,16,.8);
+
+backdrop-filter:blur(20px);
+
+border-bottom:1px solid var(--border);
+
+z-index:1000;
+
+}
+
+.logo{
+
+font-family:'Fraunces',serif;
+
+font-size:26px;
+
+font-weight:700;
+
+letter-spacing:.3px;
+
+}
+
+.logo span{
+
+color:var(--primary);
+
+}
+
+.logo small{
+
+display:block;
+
+font-size:10px;
+
+font-family:'IBM Plex Mono';
+
+color:var(--secondary);
+
+letter-spacing:3px;
+
+margin-top:3px;
+
+font-weight:400;
+
+}
+
+nav ul{
+
+display:flex;
+
+list-style:none;
+
+gap:40px;
+
+}
+
+nav ul li a{
+
+color:#c9c4b6;
+
+text-decoration:none;
+
+font-size:15px;
+
+transition:.3s;
+
+}
+
+nav ul li a:hover{
+
+color:var(--primary);
+
+}
+
+nav ul li a.active{
+
+color:var(--primary);
+
+}
+
+.verifyBtn{
+
+padding:12px 26px;
+
+border-radius:2px;
+
+background:var(--primary);
+
+color:var(--paper);
+
+text-decoration:none;
+
+font-weight:600;
+
+font-size:14px;
+
+transition:.3s;
+
+}
+
+.verifyBtn:hover{
+
+background:var(--primary-dark);
+
+box-shadow:0 10px 25px rgba(178,58,31,.25);
+
+}
+
+.navToggle{
+
+display:none;
+
+background:none;
+
+border:1px solid var(--border);
+
+color:var(--text);
+
+font-size:18px;
+
+width:42px;
+
+height:42px;
+
+border-radius:2px;
+
+cursor:pointer;
+
+}
+
+/*=========================
+Hero
+==========================*/
+
+.hero{
+
+min-height:100vh;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:120px 8%;
+
+gap:80px;
+
+flex-wrap:wrap;
+
+}
+
+.left{
+
+flex:1;
+
+min-width:500px;
+
+}
+
+.tag{
+
+display:inline-flex;
+
+gap:10px;
+
+align-items:center;
+
+padding:8px 18px;
+
+background:rgba(178,58,31,.08);
+
+border:1px solid rgba(178,58,31,.3);
+
+border-radius:2px;
+
+font-size:12px;
+
+font-family:'IBM Plex Mono';
+
+letter-spacing:1px;
+
+color:var(--primary);
+
+margin-bottom:25px;
+
+}
+
+.tag i{
+
+color:var(--primary);
+
+}
+
+.hero h1{
+
+font-family:'Fraunces',serif;
+
+font-weight:700;
+
+font-size:72px;
+
+line-height:1.05;
+
+margin-bottom:25px;
+
+letter-spacing:-1.5px;
+
+}
+
+.hero h1 span{
+
+color:var(--secondary);
+
+font-style:italic;
+
+font-weight:500;
+
+}
+
+.hero p{
+
+font-size:17px;
+
+color:var(--muted);
+
+line-height:1.85;
+
+max-width:650px;
+
+}
+
+.heroButtons{
+
+display:flex;
+
+gap:20px;
+
+margin-top:45px;
+
+}
+
+.primary{
+
+padding:15px 32px;
+
+background:var(--primary);
+
+border-radius:2px;
+
+color:var(--paper);
+
+text-decoration:none;
+
+font-weight:600;
+
+font-size:14px;
+
+transition:.3s;
+
+}
+
+.primary:hover{
+
+background:var(--primary-dark);
+
+}
+
+.secondary{
+
+padding:15px 32px;
+
+border:1px solid var(--border);
+
+border-radius:2px;
+
+color:var(--text);
+
+text-decoration:none;
+
+font-size:14px;
+
+transition:.3s;
+
+}
+
+.secondary:hover{
+
+border-color:var(--text);
+
+}
+
+/*=========================
+Trust Card — evidence-report styling
+==========================*/
+
+.right{
+
+flex:1;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+min-width:420px;
+
+}
+
+.verificationCard{
+
+width:410px;
+
+background:var(--paper);
+
+color:#1b1b18;
+
+border:1px solid #cfc7b4;
+
+border-radius:4px;
+
+padding:32px;
+
+box-shadow:0 30px 60px -20px rgba(0,0,0,.55);
+
+position:relative;
+
+overflow:hidden;
+
+transform:rotate(-1deg);
+
+animation:float 6s ease-in-out infinite;
+
+}
+
+.verificationCard::after{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+background:rgba(13,18,16,.05);
+
+pointer-events:none;
+
+}
+
+@keyframes float{
+
+0%{
+transform:rotate(-1deg) translateY(0px);
+}
+
+50%{
+transform:rotate(-1deg) translateY(-12px);
+}
+
+100%{
+transform:rotate(-1deg) translateY(0px);
+}
+
+}
+
+.scan{
+
+height:190px;
+
+border-radius:2px;
+
+background:#1a1f1c;
+
+position:relative;
+
+overflow:hidden;
+
+margin-bottom:24px;
+
+}
+
+.scan-photo{
+
+position:absolute;
+
+inset:0;
+
+background:
+
+linear-gradient(rgba(20,26,22,.15),rgba(20,26,22,.4)),
+
+url("https://cdn.arstechnica.net/wp-content/uploads/2016/09/image.jpeg");
+
+background-size:cover;
+
+background-position:center 20%;
+
+filter:grayscale(.55) contrast(1.05) brightness(.9);
+
+z-index:0;
+
+}
+
+.scan-corner{
+
+position:absolute;
+
+width:16px;
+
+height:16px;
+
+border:2px solid var(--secondary);
+
+opacity:.85;
+
+z-index:2;
+
+}
+
+.scan-corner.tl{top:8px;left:8px;border-right:none;border-bottom:none;}
+
+.scan-corner.tr{top:8px;right:8px;border-left:none;border-bottom:none;}
+
+.scan-corner.bl{bottom:8px;left:8px;border-right:none;border-top:none;}
+
+.scan-corner.br{bottom:8px;right:8px;border-left:none;border-top:none;}
+
+.scan::before{
+
+content:"";
+
+position:absolute;
+
+left:0;
+
+top:-100%;
+
+width:100%;
+
+height:2px;
+
+background:var(--secondary);
+
+box-shadow:0 0 14px var(--secondary);
+
+animation:scanner 2.8s linear infinite;
+
+z-index:1;
+
+}
+
+@keyframes scanner{
+
+0%{
+top:-2%;
+}
+
+100%{
+top:100%;
+}
+
+}
+
+.fileName{
+
+display:flex;
+
+justify-content:space-between;
+
+font-size:11px;
+
+font-family:'IBM Plex Mono';
+
+color:#6b6a5f;
+
+margin-bottom:18px;
+
+padding-bottom:14px;
+
+border-bottom:1px dashed #b6b0a0;
+
+}
+
+.status{
+
+display:flex;
+
+justify-content:space-between;
+
+margin:12px 0;
+
+font-size:14px;
+
+font-family:'IBM Plex Mono';
+
+color:#4a493f;
+
+}
+
+.status span:last-child{
+
+color:var(--success);
+
+font-weight:600;
+
+}
+
+.progress{
+
+height:5px;
+
+background:#d9d2c2;
+
+border-radius:3px;
+
+overflow:hidden;
+
+margin-top:18px;
+
+}
+
+.progress div{
+
+width:0%;
+
+height:100%;
+
+background:var(--secondary);
+
+animation:loading 4s infinite;
+
+}
+
+@keyframes loading{
+
+0%{
+width:0%;
+}
+
+100%{
+width:96%;
+}
+}
+
+/*=========================
+Sections
+==========================*/
+
+section{
+
+padding:100px 8%;
+
+}
+
+.sectionTitle{
+
+text-align:center;
+
+margin-bottom:70px;
+
+}
+
+.sectionTitle h2{
+
+font-family:'Fraunces',serif;
+
+font-weight:600;
+
+font-size:42px;
+
+margin-bottom:15px;
+
+}
+
+.sectionTitle h2 span{
+
+color:var(--primary);
+
+}
+
+.sectionTitle p{
+
+color:var(--muted);
+
+font-size:16px;
+
+max-width:700px;
+
+margin:auto;
+
+line-height:1.8;
+
+}
+
+/*=========================
+Statistics
+==========================*/
+
+.stats{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:1px;
+
+margin-top:-30px;
+
+background:var(--border);
+
+border:1px solid var(--border);
+
+}
+
+.statCard{
+
+background:var(--bg);
+
+padding:35px;
+
+transition:.3s;
+
+text-align:center;
+
+}
+
+.statCard:hover{
+
+background:var(--card);
+
+}
+
+.statCard h3{
+
+font-size:42px;
+
+font-family:'IBM Plex Mono';
+
+font-weight:600;
+
+color:var(--primary);
+
+margin-bottom:10px;
+
+}
+
+.statCard p{
+
+color:var(--muted);
+
+font-size:13px;
+
+letter-spacing:.5px;
+
+text-transform:uppercase;
+
+}
+
+/*=========================
+Workflow
+==========================*/
+
+.timeline{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+
+gap:30px;
+
+position:relative;
+
+padding-top:6px;
+
+}
+
+.timeline::before{
+
+content:"";
+
+position:absolute;
+
+top:25px;
+
+left:4%;
+
+right:4%;
+
+height:1px;
+
+background:var(--border);
+
+z-index:0;
+
+}
+
+.step{
+
+background:transparent;
+
+padding:0 6px;
+
+transition:.3s;
+
+position:relative;
+
+}
+
+.step-node{
+
+width:40px;
+
+height:40px;
+
+border-radius:50%;
+
+border:2px solid var(--primary);
+
+background:var(--bg);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-family:'IBM Plex Mono';
+
+font-size:13px;
+
+font-weight:600;
+
+color:var(--primary);
+
+margin-bottom:22px;
+
+position:relative;
+
+z-index:1;
+
+}
+
+.step:hover .step-node{
+
+background:var(--primary);
+
+color:var(--paper);
+
+}
+
+.step h3{
+
+margin-bottom:15px;
+
+font-family:'Fraunces',serif;
+
+font-weight:600;
+
+font-size:18px;
+
+}
+
+.step p{
+
+color:var(--muted);
+
+line-height:1.8;
+
+font-size:14.5px;
+
+}
+
+/*=========================
+Modules
+==========================*/
+
+.modules{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+
+gap:1px;
+
+background:var(--border);
+
+border:1px solid var(--border);
+
+}
+
+.module{
+
+background:var(--bg);
+
+padding:35px;
+
+transition:.3s;
+
+}
+
+.module:hover{
+
+background:var(--card);
+
+}
+
+.module i{
+
+font-size:36px;
+
+color:var(--primary);
+
+margin-bottom:20px;
+
+}
+
+.module h3{
+
+font-family:'Fraunces',serif;
+
+font-weight:600;
+
+margin-bottom:15px;
+
+font-size:19px;
+
+}
+
+.module p{
+
+line-height:1.8;
+
+color:var(--muted);
+
+font-size:14.5px;
+
+}
+
+/*=========================
+Trust Score Panel
+==========================*/
+
+.scorePanel{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-top:22px;
+
+padding:18px;
+
+border-radius:2px;
+
+background:#e3ddce;
+
+border:1px solid rgba(92,139,129,.25);
+
+}
+
+.circle{
+
+width:88px;
+
+height:88px;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-family:'IBM Plex Mono';
+
+font-size:26px;
+
+font-weight:700;
+
+border:5px solid var(--secondary);
+
+color:var(--secondary);
+
+position:relative;
+
+}
+
+.circle::before{
+
+content:"";
+
+position:absolute;
+
+inset:6px;
+
+border:1px solid var(--secondary);
+
+border-radius:50%;
+
+}
+
+.scoreInfo h4{
+
+font-size:18px;
+
+margin-bottom:6px;
+
+font-family:'Fraunces',serif;
+
+color:#1b1b18;
+
+}
+
+.scoreInfo p{
+
+color:#5a5748;
+
+font-size:13px;
+
+}
+
+/*=========================
+Footer
+==========================*/
+
+footer{
+
+padding:60px 8%;
+
+text-align:center;
+
+border-top:1px solid var(--border);
+
+margin-top:80px;
+
+color:var(--muted);
+
+}
+
+footer h3{
+
+font-family:'Fraunces',serif;
+
+font-weight:600;
+
+margin-bottom:15px;
+
+color:var(--text);
+
+}
+
+.socials{
+
+margin-top:30px;
+
+display:flex;
+
+justify-content:center;
+
+gap:20px;
+
+}
+
+.socials a{
+
+width:46px;
+
+height:46px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:var(--card);
+
+border:1px solid var(--border);
+
+border-radius:50%;
+
+color:var(--text);
+
+transition:.3s;
+
+text-decoration:none;
+
+}
+
+.socials a:hover{
+
+background:var(--primary);
+
+border-color:var(--primary);
+
+}
+
+/*=========================
+Responsive
+==========================*/
+
+@media(max-width:1100px){
+
+.hero{
+
+text-align:center;
+
+justify-content:center;
+
+}
+
+.left{
+
+min-width:100%;
+
+}
+
+.right{
+
+min-width:100%;
+
+}
+
+.heroButtons{
+
+justify-content:center;
+
+flex-wrap:wrap;
+
+}
+
+.hero h1{
+
+font-size:48px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+nav ul{
+
+display:none;
+
+position:absolute;
+
+top:100%;
+
+left:0;
+
+right:0;
+
+flex-direction:column;
+
+gap:0;
+
+background:rgba(13,18,16,.97);
+
+border-bottom:1px solid var(--border);
+
+}
+
+nav ul.open{
+
+display:flex;
+
+}
+
+nav ul li{
+
+width:100%;
+
+}
+
+nav ul li a{
+
+display:block;
+
+padding:16px 8%;
+
+}
+
+.navToggle{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
+
+.right{
+
+min-width:0;
+
+width:100%;
+
+}
+
+.hero{
+
+padding-top:160px;
+
+}
+
+.hero h1{
+
+font-size:38px;
+
+}
+
+.sectionTitle h2{
+
+font-size:30px;
+
+}
+
+.verificationCard{
+
+width:100%;
+
+}
+
+}
+
+@media (prefers-reduced-motion: reduce){
+
+body::before,.verificationCard,.scan::before,.progress div{
+
+animation:none;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="grid"></div>
+
+<nav>
+
+<div class="logo">
+
+Trustify <span>AI</span>
+
+<small>VERIFY • EXPLAIN • TRUST</small>
+
+</div>
+
+<ul>
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="#workflow">Workflow</a></li>
+
+<li><a href="#modules">Modules</a></li>
+
+<li><a href="#about">About</a></li>
+
+<li><a href="#contact">Contact</a></li>
+
+</ul>
+
+<a href="upload.html" class="verifyBtn">Verify Media</a>
+
+<button class="navToggle" aria-label="Toggle menu" aria-expanded="false">
+
+<i class="fa-solid fa-bars"></i>
+
+</button>
+
+</nav>
+
+<section class="hero">
+
+<div class="left">
+
+<div class="tag">
+
+<i class="fa-solid fa-shield-halved"></i>
+
+CASE FILE — EXPLAINABLE DIGITAL TRUST
+
+</div>
+
+<h1>
+
+Trust What You See.
+
+<br>
+
+<span id="typing"></span>
+
+</h1>
+
+<p>
+
+Trustify AI helps users distinguish between Original, AI Edited and AI Generated media using explainable artificial intelligence. Instead of giving only a prediction, every decision is backed with evidence, confidence scores and transparent explanations.
+
+</p>
+
+<div class="heroButtons">
+
+<a href="upload.html" class="primary">
+
+Start Verification
+
+</a>
+
+<a href="platform.html" class="secondary">
+
+Learn More
+
+</a>
+
+</div>
+
+</div>
+
+<div class="right">
+
+<div class="verificationCard">
+
+<div class="scan">
+
+<div class="scan-photo"></div>
+
+<div class="scan-corner tl"></div>
+
+<div class="scan-corner tr"></div>
+
+<div class="scan-corner bl"></div>
+
+<div class="scan-corner br"></div>
+
+</div>
+
+<div class="fileName">
+
+<span>EVIDENCE_001.JPG</span>
+
+<span>SHA-256 VERIFIED</span>
+
+</div>
+
+<div class="status">
+
+<span>Classification</span>
+
+<span>Original</span>
+
+</div>
+
+<div class="status">
+
+<span>Confidence</span>
+
+<span>98.2%</span>
+
+</div>
+
+<div class="progress">
+
+<div></div>
+
+</div>
+
+<div class="scorePanel">
+
+<div class="circle">
+
+96
+
+</div>
+
+<div class="scoreInfo">
+
+<h4>Trust Score</h4>
+
+<p>Highly Trusted Media</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section>
+
+<div class="stats">
+
+<div class="statCard">
+
+<h3 id="count1">0</h3>
+
+<p>Media Verified</p>
+
+</div>
+
+<div class="statCard">
+
+<h3 id="count2">0</h3>
+
+<p>Detection Models</p>
+
+</div>
+
+<div class="statCard">
+
+<h3 id="count3">0</h3>
+
+<p>Trust Accuracy</p>
+
+</div>
+
+<div class="statCard">
+
+<h3 id="count4">0</h3>
+
+<p>Explainable Reports</p>
+
+</div>
+
+</div>
+
+</section>
+<section id="workflow">
+
+    <div class="sectionTitle">
+    
+    <h2>
+    
+    Verification <span>Workflow</span>
+    
+    </h2>
+    
+    <p>
+    
+    Every uploaded media goes through multiple explainable AI verification stages before generating a transparent trust report.
+    
+    </p>
+    
+    </div>
+    
+    <div class="timeline">
+    
+    <div class="step">
+    
+    <div class="step-node">01</div>
+    
+    <h3>Upload Evidence</h3>
+    
+    <p>
+    
+    Upload an image, video or audio file securely. Every file is encrypted and assigned a unique digital fingerprint before analysis begins.
+    
+    </p>
+    
+    </div>
+    
+    <div class="step">
+    
+    <div class="step-node">02</div>
+    
+    <h3>AI Analysis</h3>
+    
+    <p>
+    
+    Multiple AI detection engines examine the uploaded media for GAN artifacts, manipulation traces, metadata inconsistencies and synthetic patterns.
+    
+    </p>
+    
+    </div>
+    
+    <div class="step">
+    
+    <div class="step-node">03</div>
+    
+    <h3>Explainability</h3>
+    
+    <p>
+    
+    Every prediction is supported with confidence values, highlighted evidence regions and reasoning generated through explainable AI.
+    
+    </p>
+    
+    </div>
+    
+    <div class="step">
+    
+    <div class="step-node">04</div>
+    
+    <h3>Trust Report</h3>
+    
+    <p>
+    
+    Generate a professional investigation report including Trust Score, confidence level, classification and complete evidence summary.
+    
+    </p>
+    
+    </div>
+    
+    </div>
+    
+    </section>
+    
+    <section id="modules">
+    
+    <div class="sectionTitle">
+    
+    <h2>
+    
+    Core <span>AI Modules</span>
+    
+    </h2>
+    
+    <p>
+    
+    Trustify AI combines several intelligent verification modules instead of relying on a single prediction model.
+    
+    </p>
+    
+    </div>
+    
+    <div class="modules">
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-camera"></i>
+    
+    <h3>Image Forensics</h3>
+    
+    <p>
+    
+    Detect AI-generated images, edited photographs, compression artifacts, cloning traces, lighting inconsistencies and hidden manipulation patterns.
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-video"></i>
+    
+    <h3>Video Verification</h3>
+    
+    <p>
+    
+    Analyze frame consistency, temporal artifacts, lip synchronization, GAN fingerprints and deepfake manipulation indicators.
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-volume-high"></i>
+    
+    <h3>Audio Analysis</h3>
+    
+    <p>
+    
+    Detect cloned voices, synthetic speech, frequency anomalies and AI-generated voice characteristics.
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-database"></i>
+    
+    <h3>Metadata Intelligence</h3>
+    
+    <p>
+    
+    Extract EXIF metadata, timestamps, GPS information, editing history and hidden forensic clues.
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-brain"></i>
+    
+    <h3>Explainable AI</h3>
+    
+    <p>
+    
+    Understand why Trustify AI reached a decision through confidence maps, evidence highlighting and feature importance.
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-shield-halved"></i>
+    
+    <h3>Trust Score Engine</h3>
+    
+    <p>
+    
+    Calculate a transparent Trust Score by combining outputs from multiple forensic and AI verification engines.
+    
+    </p>
+    
+    </div>
+    
+    </div>
+    
+    </section>
+    
+    <section id="about">
+    
+    <div class="sectionTitle">
+    
+    <h2>
+    
+    Why <span>Trustify AI?</span>
+    
+    </h2>
+    
+    <p>
+    
+    Unlike conventional AI detectors that simply label media as fake or real, Trustify AI focuses on transparency, explainability and digital trust.
+    
+    </p>
+    
+    </div>
+    
+    <div class="modules">
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-circle-check"></i>
+    
+    <h3>Three-Class Classification</h3>
+    
+    <p>
+    
+    Original
+    
+    <br>
+    
+    AI Edited
+    
+    <br>
+    
+    AI Generated
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-chart-line"></i>
+    
+    <h3>Trust Score</h3>
+    
+    <p>
+    
+    Each result includes a Trust Score ranging from 0 to 100 to help users quickly assess authenticity.
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-eye"></i>
+    
+    <h3>Visual Explainability</h3>
+    
+    <p>
+    
+    Heatmaps and highlighted regions clearly show which parts of the media influenced the AI's decision.
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-file-lines"></i>
+    
+    <h3>Professional Reports</h3>
+    
+    <p>
+    
+    Generate downloadable forensic reports suitable for education, research and professional verification.
+    
+    </p>
+    
+    </div>
+    
+    </div>
+    
+    </section>
+    
+    <section id="contact">
+    
+    <div class="sectionTitle">
+    
+    <h2>
+    
+    Meet The <span>Project</span>
+    
+    </h2>
+    
+    <p>
+    
+    Trustify AI is developed as an Explainable Artificial Intelligence based Digital Trust Verification Platform for detecting AI-generated and manipulated media.
+    
+    </p>
+    
+    </div>
+    
+    <div class="modules">
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-user-graduate"></i>
+    
+    <h3>Academic Project</h3>
+    
+    <p>
+    
+    Department of Computer Science & Engineering
+    
+    <br><br>
+    
+    Built using Explainable AI, Digital Forensics and Machine Learning techniques.
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-code"></i>
+    
+    <h3>Technology Stack</h3>
+    
+    <p>
+    
+    HTML
+    
+    <br>
+    
+    CSS
+    
+    <br>
+    
+    JavaScript
+    
+    <br>
+    
+    Python
+    
+    <br>
+    
+    Flask
+    
+    <br>
+    
+    TensorFlow
+    
+    <br>
+    
+    OpenCV
+    
+    </p>
+    
+    </div>
+    
+    <div class="module">
+    
+    <i class="fa-solid fa-envelope"></i>
+    
+    <h3>Future Scope</h3>
+    
+    <p>
+    
+    Support for live webcam verification, blockchain provenance, browser extensions and cloud-based verification APIs.
+    
+    </p>
+    
+    </div>
+    
+    </div>
+    
+    </section>
+    
+    <footer>
+    
+    <h3>
+    
+    Trustify AI
+    
+    </h3>
+    
+    <p>
+    
+    Explainable Digital Trust Platform
+    
+    </p>
+    
+    <div class="socials">
+    
+    <a href="#"><i class="fab fa-github"></i></a>
+    
+    <a href="#"><i class="fab fa-linkedin"></i></a>
+    
+    <a href="#"><i class="fas fa-envelope"></i></a>
+    
+    <a href="#"><i class="fas fa-globe"></i></a>
+    
+    </div>
+    
+    <p style="margin-top:30px;">
+    
+    © 2026 Trustify AI • Verify • Explain • Trust
+    
+    </p>
+    
+    </footer>
+    
+    <script>
+        
+// ===============================
+// Typing Animation
+// ===============================
+
+const typingElement = document.getElementById("typing");
+
+const words = [
+
+"Only After You Verify.",
+
+"Powered by Explainable AI.",
+
+"Backed by Digital Evidence.",
+
+"Designed for Trust."
+
+];
+
+let wordIndex = 0;
+
+let charIndex = 0;
+
+let deleting = false;
+
+function typeEffect(){
+
+const currentWord = words[wordIndex];
+
+if(!deleting){
+
+typingElement.textContent = currentWord.substring(0,charIndex++);
+
+if(charIndex > currentWord.length){
+
+deleting = true;
+
+setTimeout(typeEffect,1800);
+
+return;
+
+}
+
+}
+
+else{
+
+typingElement.textContent = currentWord.substring(0,charIndex--);
+
+if(charIndex < 0){
+
+deleting = false;
+
+wordIndex = (wordIndex+1)%words.length;
+
+}
+
+}
+
+setTimeout(typeEffect,deleting?45:90);
+
+}
+
+typeEffect();
+
+
+// ===============================
+// Counter Animation
+// ===============================
+
+function animateCounter(id,target,suffix=""){
+
+const element=document.getElementById(id);
+
+let value=0;
+
+const speed=Math.ceil(target/120);
+
+const timer=setInterval(()=>{
+
+value+=speed;
+
+if(value>=target){
+
+value=target;
+
+clearInterval(timer);
+
+}
+
+element.innerHTML=value+suffix;
+
+},20);
+
+}
+
+animateCounter("count1",1280,"+");
+
+animateCounter("count2",6);
+
+animateCounter("count3",98,"%");
+
+animateCounter("count4",540,"+");
+
+
+// ===============================
+// Scroll Reveal
+// ===============================
+
+const observer=new IntersectionObserver((entries)=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+entry.target.animate([
+
+{
+
+opacity:0,
+
+transform:"translateY(50px)"
+
+},
+
+{
+
+opacity:1,
+
+transform:"translateY(0)"
+
+}
+
+],{
+
+duration:700,
+
+fill:"forwards",
+
+easing:"ease"
+
+});
+
+}
+
+});
+
+});
+
+document.querySelectorAll(".module,.step,.statCard,.verificationCard").forEach(item=>{
+
+observer.observe(item);
+
+});
+
+
+// ===============================
+// Navbar Blur
+// ===============================
+
+window.addEventListener("scroll",()=>{
+
+const nav=document.querySelector("nav");
+
+if(window.scrollY>80){
+
+nav.style.background="rgba(13,18,16,.94)";
+
+nav.style.boxShadow="0 10px 30px rgba(0,0,0,.35)";
+
+}
+
+else{
+
+nav.style.background="rgba(13,18,16,.8)";
+
+nav.style.boxShadow="none";
+
+}
+
+});
+
+
+// ===============================
+// Mouse Glow Effect
+// ===============================
+
+const glow=document.createElement("div");
+
+glow.style.position="fixed";
+
+glow.style.width="420px";
+
+glow.style.height="420px";
+
+glow.style.borderRadius="50%";
+
+glow.style.pointerEvents="none";
+
+glow.style.background="radial-gradient(circle,rgba(92,139,129,.10),transparent 70%)";
+
+glow.style.transform="translate(-50%,-50%)";
+
+glow.style.zIndex="-1";
+
+document.body.appendChild(glow);
+
+document.addEventListener("mousemove",(e)=>{
+
+glow.style.left=e.clientX+"px";
+
+glow.style.top=e.clientY+"px";
+
+});
+
+
+// ===============================
+// Floating Particles
+// ===============================
+
+for(let i=0;i<24;i++){
+
+const particle=document.createElement("span");
+
+particle.style.position="fixed";
+
+particle.style.width=Math.random()*3+2+"px";
+
+particle.style.height=particle.style.width;
+
+particle.style.borderRadius="50%";
+
+particle.style.background="rgba(92,139,129,.35)";
+
+particle.style.left=Math.random()*100+"vw";
+
+particle.style.top=Math.random()*100+"vh";
+
+particle.style.pointerEvents="none";
+
+particle.style.animation=`floatParticle ${Math.random()*12+8}s linear infinite`;
+
+particle.style.animationDelay=Math.random()*8+"s";
+
+document.body.appendChild(particle);
+
+}
+
+const style=document.createElement("style");
+
+style.innerHTML=`
+
+@keyframes floatParticle{
+
+0%{
+
+transform:translateY(0) scale(1);
+
+opacity:0;
+
+}
+
+20%{
+
+opacity:1;
+
+}
+
+100%{
+
+transform:translateY(-100vh) scale(.4);
+
+opacity:0;
+
+}
+
+}
+
+`;
+
+document.head.appendChild(style);
+
+
+// ===============================
+// Active Navigation
+// ===============================
+
+const sections=document.querySelectorAll("section");
+
+const navLinks=document.querySelectorAll("nav ul li a");
+
+window.addEventListener("scroll",()=>{
+
+let current="";
+
+sections.forEach(sec=>{
+
+const top=sec.offsetTop-180;
+
+if(scrollY>=top){
+
+current=sec.getAttribute("id");
+
+}
+
+});
+
+navLinks.forEach(link=>{
+
+link.classList.remove("active");
+
+if(link.getAttribute("href")==="#"+current){
+
+link.classList.add("active");
+
+}
+
+});
+
+});
+
+
+// ===============================
+// Mobile Nav Toggle
+// ===============================
+
+const navToggle=document.querySelector(".navToggle");
+
+const navList=document.querySelector("nav ul");
+
+navToggle.addEventListener("click",()=>{
+
+const isOpen=navList.classList.toggle("open");
+
+navToggle.setAttribute("aria-expanded",isOpen);
+
+});
+
+navList.querySelectorAll("a").forEach(link=>{
+
+link.addEventListener("click",()=>{
+
+navList.classList.remove("open");
+
+navToggle.setAttribute("aria-expanded","false");
+
+});
+
+});
+
+
+// ===============================
+// Trust Score Animation
+// ===============================
+
+const score=document.querySelector(".circle");
+
+let trust=0;
+
+const trustAnimation=setInterval(()=>{
+
+trust++;
+
+score.innerHTML=trust;
+
+if(trust>=96){
+
+clearInterval(trustAnimation);
+
+}
+
+},25);
+
+
+// ===============================
+// Verification Status Rotation
+// ===============================
+
+const statusText=document.querySelector(".status span:last-child");
+
+const statusList=[
+
+"Original",
+
+"AI Edited",
+
+"AI Generated"
+
+];
+
+let statusIndex=0;
+
+setInterval(()=>{
+
+statusIndex=(statusIndex+1)%statusList.length;
+
+statusText.innerHTML=statusList[statusIndex];
+
+statusText.style.color=
+
+statusIndex===0?"#5c8b81":
+
+statusIndex===1?"#b8863f":
+
+"#b23a1f";
+
+},3500);
+
+
+// ===============================
+// Smooth Anchor Scrolling
+// ===============================
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+
+anchor.addEventListener("click",function(e){
+
+const target=document.querySelector(this.getAttribute("href"));
+
+if(target){
+
+e.preventDefault();
+
+target.scrollIntoView({
+
+behavior:"smooth"
+
+});
+
+}
+
+});
+
+});
+
+
+// ===============================
+// Hero Card Tilt Effect
+// ===============================
+
+const card=document.querySelector(".verificationCard");
+
+card.addEventListener("mouseenter",()=>{
+
+card.style.animationPlayState="paused";
+
+});
+
+card.addEventListener("mousemove",(e)=>{
+
+const rect=card.getBoundingClientRect();
+
+const x=e.clientX-rect.left;
+
+const y=e.clientY-rect.top;
+
+const rotateY=(x-rect.width/2)/18;
+
+const rotateX=(rect.height/2-y)/18;
+
+card.style.transform=
+
+`perspective(1000px)
+rotateX(${rotateX}deg)
+rotateY(${rotateY}deg)
+translateY(-8px)`;
+
+});
+
+card.addEventListener("mouseleave",()=>{
+
+card.style.transform="perspective(1000px) rotateX(0) rotateY(0) rotate(-1deg)";
+
+card.style.animationPlayState="running";
+
+});
+
+
+// ===============================
+// End
+// ===============================
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Media | Trustify AI</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"/>
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:#0d1210;
+  --card:#151a18;
+  --primary:#b23a1f;
+  --primary-dark:#7f2712;
+  --secondary:#5c8b81;
+  --paper:#eee8db;
+  --paper-dim:#d9d2c2;
+  --text:#e9e6dd;
+  --muted:#8b948d;
+  --border:rgba(233,230,221,.10);
+  --amber:#b8863f;
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(135deg,#0d1210,#0f1512,#12100d);
+  color:var(--text);
+  min-height:100vh;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  background:
+    radial-gradient(circle at 15% 15%,rgba(178,58,31,.06),transparent 25%),
+    radial-gradient(circle at 85% 10%,rgba(92,139,129,.06),transparent 25%);
+}
+
+.grid-bg{
+  position:fixed;inset:0;z-index:-1;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:45px 45px;
+  mask-image:radial-gradient(circle at center,black 40%,transparent 100%);
+}
+
+a{color:inherit;}
+
+/* ---------- NAV ---------- */
+nav{
+  position:fixed;top:0;width:100%;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 8%;
+  background:rgba(13,18,16,.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-family:'Fraunces',serif;font-size:24px;font-weight:700;}
+.logo span{color:var(--primary);}
+.logo small{display:block;font-size:10px;font-family:'IBM Plex Mono';color:var(--secondary);letter-spacing:3px;margin-top:3px;font-weight:400;}
+nav ul{display:flex;list-style:none;gap:36px;}
+nav ul li a{color:#c9c4b6;text-decoration:none;font-size:14.5px;transition:.3s;}
+nav ul li a:hover{color:var(--primary);}
+@media(max-width:760px){ nav ul{display:none;} }
+
+/* ---------- SHELL ---------- */
+main{
+  max-width:760px;
+  margin:0 auto;
+  padding:160px 8% 100px;
+}
+
+.case-tag{
+  font-family:'IBM Plex Mono';font-size:12px;letter-spacing:3px;color:var(--primary);
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;justify-content:center;
+}
+.case-tag::before{content:"";width:8px;height:8px;background:var(--primary);border-radius:50%;display:inline-block;}
+
+h1{
+  font-family:'Fraunces',serif;font-weight:600;font-size:38px;text-align:center;margin-bottom:14px;letter-spacing:-.5px;
+}
+.subhead{color:var(--muted);text-align:center;font-size:15px;max-width:480px;margin:0 auto 50px;line-height:1.7;}
+
+/* ---------- STAGE: UPLOAD ---------- */
+.stage{display:none;}
+.stage.active{display:block;}
+
+.dropzone{
+  border:2px dashed var(--border);
+  border-radius:4px;
+  padding:60px 30px;
+  text-align:center;
+  cursor:pointer;
+  transition:.25s;
+  background:rgba(21,26,24,.4);
+  display:block;
+}
+.dropzone.dragover,.dropzone:hover{
+  border-color:var(--secondary);
+  background:rgba(92,139,129,.05);
+}
+.dropzone i{font-size:38px;color:var(--secondary);margin-bottom:18px;}
+.dropzone h3{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin-bottom:8px;}
+.dropzone p{color:var(--muted);font-size:13.5px;}
+.dropzone input{display:none;}
+
+.fileTypes{
+  display:flex;justify-content:center;gap:14px;margin-top:26px;flex-wrap:wrap;
+}
+.fileTypes span{
+  font-family:'IBM Plex Mono';font-size:11.5px;color:var(--muted);
+  border:1px solid var(--border);padding:6px 14px;border-radius:20px;
+}
+
+/* ---------- STAGE: PREVIEW ---------- */
+.previewCard{
+  background:var(--paper);color:#1b1b18;border-radius:4px;padding:26px;
+  box-shadow:0 25px 50px -20px rgba(0,0,0,.5);
+}
+.previewCard .top-row{
+  display:flex;justify-content:space-between;font-family:'IBM Plex Mono';font-size:11px;color:#6b6a5f;
+  padding-bottom:14px;border-bottom:1px dashed #b6b0a0;margin-bottom:16px;
+}
+.previewThumb{
+  height:200px;border-radius:2px;overflow:hidden;background:#d9d2c2;
+  display:flex;align-items:center;justify-content:center;
+}
+.previewThumb img,.previewThumb video{width:100%;height:100%;object-fit:cover;}
+.previewThumb i{font-size:44px;color:#8b948d;}
+
+.previewActions{display:flex;gap:14px;margin-top:26px;justify-content:center;}
+
+.btn{
+  padding:14px 30px;border-radius:2px;font-weight:600;font-size:14px;
+  text-decoration:none;border:none;cursor:pointer;transition:.3s;font-family:'Inter';
+}
+.btnPrimary{background:var(--primary);color:var(--paper);}
+.btnPrimary:hover{background:var(--primary-dark);}
+.btnGhost{background:transparent;border:1px solid var(--border);color:var(--text);}
+.btnGhost:hover{border-color:var(--text);}
+
+/* ---------- STAGE: ANALYZING ---------- */
+.analyzeList{max-width:420px;margin:0 auto;}
+.aItem{
+  display:flex;align-items:center;gap:16px;padding:16px 0;
+  border-bottom:1px solid var(--border);
+  opacity:.35;transition:.4s;
+}
+.aItem.active{opacity:1;}
+.aItem.done{opacity:.7;}
+.aItem .node{
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:'IBM Plex Mono';font-size:12px;color:var(--muted);transition:.4s;
+}
+.aItem.active .node{border-color:var(--secondary);color:var(--secondary);}
+.aItem.done .node{border-color:var(--secondary);background:var(--secondary);color:var(--bg);}
+.aItem .label{font-size:14.5px;}
+.aItem .status{margin-left:auto;font-family:'IBM Plex Mono';font-size:11px;color:var(--muted);letter-spacing:1px;}
+.aItem.active .status{color:var(--secondary);}
+
+/* ---------- STAGE: RESULTS ---------- */
+.resultCard{
+  background:var(--paper);color:#1b1b18;border-radius:4px;overflow:hidden;
+  box-shadow:0 25px 50px -20px rgba(0,0,0,.5);
+}
+.resultTop{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:22px 28px;border-bottom:1px dashed #b6b0a0;
+  font-family:'IBM Plex Mono';font-size:11px;color:#6b6a5f;
+}
+.verdictBand{
+  padding:26px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+  border-bottom:1px solid #d9d2c2;
+}
+.verdictLabel{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:2px;color:#6b6a5f;margin-bottom:6px;}
+.verdictClass{font-family:'Fraunces',serif;font-weight:700;font-size:26px;}
+.verdictClass.original{color:var(--secondary);}
+.verdictClass.edited{color:var(--amber);}
+.verdictClass.generated{color:var(--primary);}
+.confBlock{text-align:right;}
+.confNum{font-family:'IBM Plex Mono';font-size:22px;font-weight:600;}
+
+.trustBand{
+  display:flex;align-items:center;gap:20px;padding:24px 28px;background:#e3ddce;
+}
+.trustCircle{
+  width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono';font-size:24px;font-weight:700;flex-shrink:0;position:relative;
+}
+.trustCircle::before{content:"";position:absolute;inset:5px;border-radius:50%;border:1px solid currentColor;opacity:.5;}
+.trustInfo h4{font-family:'Fraunces',serif;font-size:17px;margin-bottom:4px;}
+.trustInfo p{font-size:12.5px;color:#5a5748;}
+
+.reasonBlock{padding:26px 28px;}
+.reasonBlock .verdictLabel{margin-bottom:14px;}
+.reasonBlock ul{list-style:none;font-size:14px;line-height:2.1;}
+.reasonBlock li::before{content:"— ";color:var(--primary);}
+
+.resultActions{display:flex;gap:14px;justify-content:center;margin-top:30px;flex-wrap:wrap;}
+
+.disclaimer{
+  margin-top:40px;text-align:center;font-size:12px;color:var(--muted);
+  font-family:'IBM Plex Mono';line-height:1.8;max-width:480px;margin-left:auto;margin-right:auto;
+}
+
+footer{padding:40px 8%;text-align:center;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;font-family:'IBM Plex Mono';margin-top:40px;}
+footer a{color:var(--secondary);text-decoration:none;}
+
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <div class="logo">Trustify <span>AI</span><small>VERIFY • EXPLAIN • TRUST</small></div>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="platform.html">Platform</a></li>
+    <li><a href="upload.html">Verify</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- STAGE 1: UPLOAD -->
+  <section class="stage active" id="stageUpload">
+    <div class="case-tag">NEW SUBMISSION</div>
+    <h1>Submit media for verification</h1>
+    <p class="subhead">Upload an image, video, or audio file. Trustify AI will run it through the full explainable verification pipeline.</p>
+
+    <label class="dropzone" id="dropzone">
+      <i class="fa-solid fa-upload"></i>
+      <h3>Drag & drop your file here</h3>
+      <p>or click to browse — JPG, PNG, MP4, MOV, WAV, MP3</p>
+      <input type="file" id="fileInput" accept="image/*,video/*,audio/*">
+    </label>
+
+    <div class="fileTypes">
+      <span>Image Forensics</span>
+      <span>Video Analysis</span>
+      <span>Audio Verification</span>
+    </div>
+  </section>
+
+  <!-- STAGE 2: PREVIEW -->
+  <section class="stage" id="stagePreview">
+    <div class="case-tag">EVIDENCE RECEIVED</div>
+    <h1>Confirm before analysis</h1>
+    <p class="subhead">This is what will be examined. Analysis cannot be undone once started.</p>
+
+    <div class="previewCard">
+      <div class="top-row">
+        <span id="pvName">FILE.JPG</span>
+        <span id="pvMeta">— KB</span>
+      </div>
+      <div class="previewThumb" id="pvThumb">
+        <i class="fa-solid fa-file"></i>
+      </div>
+    </div>
+
+    <div class="previewActions">
+      <button class="btn btnGhost" id="btnCancel">Choose a different file</button>
+      <button class="btn btnPrimary" id="btnAnalyze">Begin Analysis</button>
+    </div>
+  </section>
+
+  <!-- STAGE 3: ANALYZING -->
+  <section class="stage" id="stageAnalyzing">
+    <div class="case-tag">CASE OPEN</div>
+    <h1>Running verification</h1>
+    <p class="subhead">Every file moves through the same six stages before a verdict is shown.</p>
+
+    <div class="analyzeList" id="analyzeList">
+      <div class="aItem" data-stage="0"><div class="node">01</div><div class="label">Evidence intake</div><div class="status">PENDING</div></div>
+      <div class="aItem" data-stage="1"><div class="node">02</div><div class="label">Metadata analysis</div><div class="status">PENDING</div></div>
+      <div class="aItem" data-stage="2"><div class="node">03</div><div class="label">AI artifact detection</div><div class="status">PENDING</div></div>
+      <div class="aItem" data-stage="3"><div class="node">04</div><div class="label">Explainability engine</div><div class="status">PENDING</div></div>
+      <div class="aItem" data-stage="4"><div class="node">05</div><div class="label">Trust score calculation</div><div class="status">PENDING</div></div>
+      <div class="aItem" data-stage="5"><div class="node">06</div><div class="label">Report generation</div><div class="status">PENDING</div></div>
+    </div>
+  </section>
+
+  <!-- STAGE 4: RESULTS -->
+  <section class="stage" id="stageResults">
+    <div class="case-tag">CASE CLOSED</div>
+    <h1>Investigation report</h1>
+    <p class="subhead">Full breakdown of the verdict, with the reasoning behind it.</p>
+
+    <div class="resultCard">
+      <div class="resultTop">
+        <span id="rFileName">FILE.JPG</span>
+        <span id="rHash">SHA-256 · —</span>
+      </div>
+      <div class="verdictBand">
+        <div>
+          <div class="verdictLabel">CLASSIFICATION</div>
+          <div class="verdictClass" id="rClass">—</div>
+        </div>
+        <div class="confBlock">
+          <div class="verdictLabel">CONFIDENCE</div>
+          <div class="confNum" id="rConf">—</div>
+        </div>
+      </div>
+      <div class="trustBand">
+        <div class="trustCircle" id="rTrustCircle">—</div>
+        <div class="trustInfo">
+          <h4>Trust Score</h4>
+          <p id="rTrustLabel">—</p>
+        </div>
+      </div>
+      <div class="reasonBlock">
+        <div class="verdictLabel">WHY</div>
+        <ul id="rReasons"></ul>
+      </div>
+    </div>
+
+    <div class="resultActions">
+      <button class="btn btnGhost" id="btnAnother">Verify another file</button>
+      <button class="btn btnPrimary" id="btnDownload">Download report</button>
+    </div>
+
+    <p class="disclaimer">If the Flask backend at <span id="backendUrlDisplay"></span> is unreachable, this result was generated by an on-page simulator for demonstration purposes.</p>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 Trustify AI · <a href="index.html">Home</a> · <a href="platform.html">Platform</a>
+</footer>
+
+<script>
+
+const stages = {
+  upload: document.getElementById("stageUpload"),
+  preview: document.getElementById("stagePreview"),
+  analyzing: document.getElementById("stageAnalyzing"),
+  results: document.getElementById("stageResults")
+};
+
+function showStage(name){
+  Object.values(stages).forEach(s => s.classList.remove("active"));
+  stages[name].classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+let currentFile = null;
+
+// ===============================
+// Dropzone behaviour
+// ===============================
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("fileInput");
+
+dropzone.addEventListener("dragover", e => {
+  e.preventDefault();
+  dropzone.classList.add("dragover");
+});
+dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+dropzone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropzone.classList.remove("dragover");
+  if(e.dataTransfer.files.length){
+    handleFile(e.dataTransfer.files[0]);
+  }
+});
+fileInput.addEventListener("change", e => {
+  if(e.target.files.length){
+    handleFile(e.target.files[0]);
+  }
+});
+
+function handleFile(file){
+  currentFile = file;
+
+  document.getElementById("pvName").textContent = file.name.toUpperCase();
+  document.getElementById("pvMeta").textContent = (file.size/1024).toFixed(1) + " KB · " + (file.type || "unknown type");
+
+  const thumb = document.getElementById("pvThumb");
+  thumb.innerHTML = "";
+
+  if(file.type.startsWith("image/")){
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    thumb.appendChild(img);
+  } else if(file.type.startsWith("video/")){
+    const vid = document.createElement("video");
+    vid.src = URL.createObjectURL(file);
+    vid.muted = true;
+    vid.autoplay = true;
+    vid.loop = true;
+    thumb.appendChild(vid);
+  } else {
+    const icon = document.createElement("i");
+    icon.className = "fa-solid fa-file-audio";
+    thumb.appendChild(icon);
+  }
+
+  showStage("preview");
+}
+
+document.getElementById("btnCancel").addEventListener("click", () => {
+  currentFile = null;
+  fileInput.value = "";
+  showStage("upload");
+});
+
+// ===============================
+// Analysis simulation
+// ===============================
+// ===============================
+// Backend wiring
+// ===============================
+// Point this at your Flask server. If it's unreachable (e.g. you haven't
+// built the model yet), analysis automatically falls back to the on-page
+// simulator below so the demo still works end-to-end.
+const BACKEND_URL = "http://localhost:5000/api/analyze";
+document.getElementById("backendUrlDisplay").textContent = BACKEND_URL;
+
+document.getElementById("btnAnalyze").addEventListener("click", () => {
+  showStage("analyzing");
+  runAnalysis();
+});
+
+async function runAnalysis(){
+  const animationDone = animateStages();
+  const resultPromise = analyzeFile(currentFile);
+
+  const [, result] = await Promise.all([animationDone, resultPromise]);
+  renderResults(result);
+  showStage("results");
+}
+
+function animateStages(){
+  return new Promise(resolve => {
+    const items = document.querySelectorAll(".aItem");
+    items.forEach(i => { i.classList.remove("active","done"); i.querySelector(".status").textContent = "PENDING"; });
+
+    let i = 0;
+    function step(){
+      if(i > 0){
+        items[i-1].classList.remove("active");
+        items[i-1].classList.add("done");
+        items[i-1].querySelector(".status").textContent = "DONE";
+      }
+      if(i < items.length){
+        items[i].classList.add("active");
+        items[i].querySelector(".status").textContent = "RUNNING";
+        i++;
+        setTimeout(step, 650);
+      } else {
+        resolve();
+      }
+    }
+    step();
+  });
+}
+
+async function analyzeFile(file){
+  try{
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(BACKEND_URL, { method: "POST", body: formData });
+    if(!res.ok) throw new Error("Backend returned " + res.status);
+
+    const data = await res.json();
+    // maps the Flask contract straight onto what renderResults() expects
+    return {
+      label: data.label,
+      css: data.classification,
+      confidence: Number(data.confidence).toFixed(1),
+      trust: data.trust_score,
+      reasons: data.reasons,
+      hash: data.file_hash
+    };
+  } catch(err){
+    console.warn("Backend unreachable, falling back to simulated result:", err.message);
+    return runFakeInference();
+  }
+}
+
+// ===============================
+// Placeholder inference — swap for real API call
+// ===============================
+function runFakeInference(){
+  const classes = [
+    {
+      key:"original", label:"Original", css:"original",
+      reasons:[
+        "Sensor noise pattern matches expected camera profile",
+        "No GAN or diffusion artifacts found in facial or background regions",
+        "Metadata timestamps are internally consistent",
+        "Compression history matches a single capture-and-share cycle"
+      ],
+      trustRange:[82,97]
+    },
+    {
+      key:"edited", label:"AI Edited", css:"edited",
+      reasons:[
+        "Localized inpainting artifacts detected in one region",
+        "Metadata shows an editing tool signature after capture",
+        "Lighting direction is inconsistent between subject and background",
+        "Compression pattern differs between edited and untouched regions"
+      ],
+      trustRange:[35,60]
+    },
+    {
+      key:"generated", label:"AI Generated", css:"generated",
+      reasons:[
+        "GAN artifacts detected across facial region",
+        "No sensor noise pattern found — inconsistent with any camera",
+        "Metadata contains no capture device information",
+        "Frequency-domain analysis shows synthetic generation signature"
+      ],
+      trustRange:[5,28]
+    }
+  ];
+
+  const pick = classes[Math.floor(Math.random()*classes.length)];
+  const confidence = (Math.random()*8 + 91).toFixed(1);
+  const trust = Math.floor(Math.random()*(pick.trustRange[1]-pick.trustRange[0]+1)) + pick.trustRange[0];
+
+  return { ...pick, confidence, trust };
+}
+
+function renderResults(result){
+  document.getElementById("rFileName").textContent = currentFile ? currentFile.name.toUpperCase() : "FILE";
+  document.getElementById("rHash").textContent = "SHA-256 · " + (result.hash || fakeHash());
+
+  const classEl = document.getElementById("rClass");
+  classEl.textContent = result.label;
+  classEl.className = "verdictClass " + result.css;
+
+  document.getElementById("rConf").textContent = result.confidence + "%";
+
+  const circle = document.getElementById("rTrustCircle");
+  circle.textContent = result.trust;
+  const color = result.trust >= 70 ? "#5c8b81" : result.trust >= 40 ? "#b8863f" : "#b23a1f";
+  circle.style.border = "5px solid " + color;
+  circle.style.color = color;
+
+  document.getElementById("rTrustLabel").textContent =
+    result.trust >= 70 ? "Highly Trusted Media" :
+    result.trust >= 40 ? "Moderate Trust — Review Recommended" :
+    "Low Trust — Likely Synthetic";
+
+  const list = document.getElementById("rReasons");
+  list.innerHTML = "";
+  result.reasons.forEach(r => {
+    const li = document.createElement("li");
+    li.textContent = r;
+    list.appendChild(li);
+  });
+}
+
+function fakeHash(){
+  const chars = "0123456789ABCDEF";
+  let out = "";
+  for(let i=0;i<8;i++) out += chars[Math.floor(Math.random()*16)];
+  return out + "…" + chars[Math.floor(Math.random()*16)] + chars[Math.floor(Math.random()*16)] + chars[Math.floor(Math.random()*16)] + chars[Math.floor(Math.random()*16)];
+}
+
+// ===============================
+// Reset / download
+// ===============================
+document.getElementById("btnAnother").addEventListener("click", () => {
+  currentFile = null;
+  fileInput.value = "";
+  showStage("upload");
+});
+
+document.getElementById("btnDownload").addEventListener("click", () => {
+  const report = [
+    "TRUSTIFY AI — INVESTIGATION REPORT",
+    "File: " + document.getElementById("rFileName").textContent,
+    "Hash: " + document.getElementById("rHash").textContent,
+    "Classification: " + document.getElementById("rClass").textContent,
+    "Confidence: " + document.getElementById("rConf").textContent,
+    "Trust Score: " + document.getElementById("rTrustCircle").textContent + "/100",
+    "",
+    "Reasoning:",
+    ...Array.from(document.querySelectorAll("#rReasons li")).map(li => "- " + li.textContent)
+  ].join("\n");
+
+  const blob = new Blob([report], {type:"text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "trustify-report.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+</script>
+
+</body>
+</html>
