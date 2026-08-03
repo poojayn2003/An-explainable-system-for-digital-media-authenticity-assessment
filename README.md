@@ -164,12 +164,12 @@ index.html  (Landing)
 
 | Name          | Role                | Reg. No. |
 |----------------|----------------------|-----------|
-| _Your Name_    | _Frontend / Backend_ | _—_       |
-| _Member Name_  | _Role_                | _—_       |
-| _Member Name_  | _Role_                | _—_       |
+| _Pooja Y N_   | _Frontend / Backend_ | _1JB24CD403_       |
+| _Amrutha R N_  | _Backend_                | _1JB23CD006_       |
+| _Pooja A R_  | _ML_                | _1JB23CD037_       |
 
-**Guide:** _Guide Name_, Department of Computer Science & Engineering
-**Institution:** _College Name_ — Academic Year 2025–26
+**Guide:** _Vindyashree_, Department of Computer Science & Engineering (Data Science)
+**Institution:** _SJBIT_ — Academic Year 2026–27
 
 ---
 
