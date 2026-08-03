@@ -107,25 +107,11 @@ transform:translateY(0px);
 
 /* Grid — faint ledger, not neon */
 
-.grid{
-
-position:fixed;
-
-width:100%;
-height:100%;
-
-background-image:
-
-linear-gradient(var(--border) 1px,transparent 1px),
-
-linear-gradient(90deg,var(--border) 1px,transparent 1px);
-
-background-size:45px 45px;
-
-z-index:-2;
-
-mask-image:radial-gradient(circle at center,black 40%,transparent 100%);
-
+.grid-bg{
+  position:fixed;inset:0;z-index:-1;
+  background-image:radial-gradient(var(--border) 1px,transparent 1px);
+  background-size:26px 26px;
+  mask-image:radial-gradient(circle at center,black 40%,transparent 100%);
 }
 
 /*=========================
@@ -161,6 +147,10 @@ z-index:1000;
 .logo{
 
 font-family:'Fraunces',serif;
+
+color:inherit;
+
+text-decoration:none;
 
 font-size:26px;
 
@@ -1299,13 +1289,10 @@ animation:none;
 
 <nav>
 
-<div class="logo">
-
-Trustify <span>AI</span>
-
-<small>VERIFY • EXPLAIN • TRUST</small>
-
-</div>
+<a href="index.html" class="logo">
+    Trustify <span>AI</span>
+    <small>VERIFY • EXPLAIN • TRUST</small>
+</a>
 
 <ul>
 

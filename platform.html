@@ -45,13 +45,9 @@ body::before{
 }
 
 .grid-bg{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  background-image:
-    linear-gradient(var(--border) 1px,transparent 1px),
-    linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:45px 45px;
+  position:fixed;inset:0;z-index:-1;
+  background-image:radial-gradient(var(--border) 1px,transparent 1px);
+  background-size:26px 26px;
   mask-image:radial-gradient(circle at center,black 40%,transparent 100%);
 }
 
@@ -66,7 +62,8 @@ nav{
   backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
 }
-.logo{font-family:'Fraunces',serif;font-size:24px;font-weight:700;}
+.logo{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:inherit;
+text-decoration:none;}
 .logo span{color:var(--primary);}
 .logo small{display:block;font-size:10px;font-family:'IBM Plex Mono';color:var(--secondary);letter-spacing:3px;margin-top:3px;font-weight:400;}
 nav ul{display:flex;list-style:none;gap:36px;}
@@ -212,7 +209,10 @@ footer a{color:var(--secondary);text-decoration:none;}
 <div class="grid-bg"></div>
 
 <nav>
-  <div class="logo">Trustify <span>AI</span><small>VERIFY • EXPLAIN • TRUST</small></div>
+  <a href="index.html" class="logo">
+    Trustify <span>AI</span>
+    <small>VERIFY • EXPLAIN • TRUST</small>
+</a>
   <ul>
     <li><a href="index.html">Home</a></li>
     <li><a href="platform.html" class="active">Platform</a></li>
