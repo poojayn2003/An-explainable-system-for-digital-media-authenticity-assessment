@@ -27,6 +27,23 @@
   --border:rgba(233,230,221,.10);
 }
 
+html[data-theme="light"]{
+  --bg:#f3efe4;
+  --card:#ffffff;
+  --primary:#b23a1f;
+  --primary-dark:#7f2712;
+  --secondary:#3f6d62;
+  --paper:#fbf8f2;
+  --paper-dim:#e6ded0;
+  --text:#221f19;
+  --muted:#6a6559;
+  --border:rgba(34,31,25,.12);
+}
+
+html[data-theme="light"] body{
+  background:linear-gradient(135deg,#f3efe4,#efe9db,#f2ede1);
+}
+
 body{
   font-family:'Inter',sans-serif;
   background:linear-gradient(135deg,#0d1210,#0f1512,#12100d);
@@ -72,6 +89,9 @@ nav ul li a:hover,nav ul li a.active{color:var(--primary);}
 .verifyBtn{padding:11px 24px;border-radius:2px;background:var(--primary);color:var(--paper);text-decoration:none;font-weight:600;font-size:13.5px;transition:.3s;}
 .verifyBtn:hover{background:var(--primary-dark);}
 .navToggle{display:none;background:none;border:1px solid var(--border);color:var(--text);font-size:16px;width:40px;height:40px;border-radius:2px;cursor:pointer;}
+.navRight{display:flex;align-items:center;}
+.themeToggle{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:.3s;margin-left:14px;}
+.themeToggle:hover{border-color:var(--secondary);color:var(--secondary);}
 
 @media(max-width:860px){
   nav ul{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:rgba(13,18,16,.97);border-bottom:1px solid var(--border);}
@@ -216,11 +236,15 @@ footer a{color:var(--secondary);text-decoration:none;}
   <ul>
     <li><a href="index.html">Home</a></li>
     <li><a href="platform.html" class="active">Platform</a></li>
-    <li><a href="#modules">Modules</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="upload.html">Verify</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
   </ul>
-  <a href="upload.html" class="verifyBtn">Start Verification</a>
-  <button class="navToggle" aria-label="Toggle menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+  <div class="navRight">
+    <a href="upload.html" class="verifyBtn">Start Verification</a>
+    <button class="themeToggle" id="themeToggle" title="Toggle dark / light mode"><i class="fa-solid fa-moon"></i></button>
+    <button class="navToggle" aria-label="Toggle menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -242,12 +266,12 @@ footer a{color:var(--secondary);text-decoration:none;}
     <div class="threat">
       <span class="exhibit-id">EXHIBIT A</span>
       <h3>Deepfakes</h3>
-      <p>Face-swapped and reanimated video used to impersonate real people in fabricated statements.</p>
+      <p>Face-swapped and synthetically altered photos used to impersonate real people in fabricated statements.</p>
     </div>
     <div class="threat">
       <span class="exhibit-id">EXHIBIT B</span>
       <h3>Fake Evidence</h3>
-      <p>Synthetic photos and videos submitted as proof in disputes, fraud claims, and legal proceedings.</p>
+      <p>Synthetic photos submitted as proof in disputes, fraud claims, and legal proceedings.</p>
     </div>
     <div class="threat">
       <span class="exhibit-id">EXHIBIT C</span>
@@ -256,11 +280,6 @@ footer a{color:var(--secondary);text-decoration:none;}
     </div>
     <div class="threat">
       <span class="exhibit-id">EXHIBIT D</span>
-      <h3>Voice Cloning</h3>
-      <p>Cloned voices used in scam calls, fraud, and impersonation of executives or family members.</p>
-    </div>
-    <div class="threat">
-      <span class="exhibit-id">EXHIBIT E</span>
       <h3>Misinformation</h3>
       <p>Fabricated media that spreads faster than any correction or fact-check can catch up to it.</p>
     </div>
@@ -366,12 +385,10 @@ footer a{color:var(--secondary);text-decoration:none;}
   <div class="sectionHead">
     <div class="case-tag">ARCHITECTURE</div>
     <h2>Core modules</h2>
-    <p>Seven specialized engines working together, not one model guessing alone.</p>
+    <p>Five specialized engines working together, not one model guessing alone.</p>
   </div>
   <div class="modules">
     <div class="module"><i class="fa-solid fa-camera"></i><h3>Image Forensics</h3><p>Pixel-level artifact and compression analysis.</p></div>
-    <div class="module"><i class="fa-solid fa-video"></i><h3>Video Analysis</h3><p>Frame consistency and temporal artifact detection.</p></div>
-    <div class="module"><i class="fa-solid fa-volume-high"></i><h3>Audio Verification</h3><p>Cloned voice and synthetic speech detection.</p></div>
     <div class="module"><i class="fa-solid fa-database"></i><h3>Metadata Intelligence</h3><p>EXIF, timestamp, and edit-history extraction.</p></div>
     <div class="module"><i class="fa-solid fa-shield-halved"></i><h3>Trust Score Engine</h3><p>Fuses every signal into one transparent score.</p></div>
     <div class="module"><i class="fa-solid fa-brain"></i><h3>Explainability Engine</h3><p>Confidence maps and plain-language reasoning.</p></div>
@@ -409,7 +426,7 @@ footer a{color:var(--secondary);text-decoration:none;}
     <div class="futureCard"><i class="fa-solid fa-code"></i><h3>Public API</h3><p>Let other platforms verify media programmatically.</p></div>
     <div class="futureCard"><i class="fa-solid fa-mobile-screen"></i><h3>Mobile App</h3><p>Verification on the go, from a phone camera roll.</p></div>
     <div class="futureCard"><i class="fa-solid fa-link"></i><h3>Blockchain Provenance</h3><p>Immutable origin and modification history for every file.</p></div>
-    <div class="futureCard"><i class="fa-solid fa-bolt"></i><h3>Real-Time Verification</h3><p>Live-stream analysis as video is being broadcast.</p></div>
+    <div class="futureCard"><i class="fa-solid fa-bolt"></i><h3>Real-Time Verification</h3><p>Real-time analysis as images are uploaded or shared online.</p></div>
   </div>
 </section>
 
@@ -424,6 +441,24 @@ footer a{color:var(--secondary);text-decoration:none;}
 </footer>
 
 <script>
+(function initTheme(){
+  const saved=localStorage.getItem("trustifyTheme")||"dark";
+  document.documentElement.setAttribute("data-theme",saved);
+  updateThemeIcon(saved);
+})();
+function updateThemeIcon(theme){
+  const btn=document.getElementById("themeToggle");
+  if(!btn) return;
+  btn.innerHTML=theme==="light"?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>';
+}
+document.getElementById("themeToggle").onclick=function(){
+  const current=document.documentElement.getAttribute("data-theme")||"dark";
+  const next=current==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  localStorage.setItem("trustifyTheme",next);
+  updateThemeIcon(next);
+};
+
 const navToggle=document.querySelector(".navToggle");
 const navList=document.querySelector("nav ul");
 navToggle.addEventListener("click",()=>{
@@ -435,6 +470,22 @@ navList.querySelectorAll("a").forEach(link=>{
     navList.classList.remove("open");
     navToggle.setAttribute("aria-expanded","false");
   });
+});
+
+// Mouse Glow Effect
+const glow=document.createElement("div");
+glow.style.position="fixed";
+glow.style.width="420px";
+glow.style.height="420px";
+glow.style.borderRadius="50%";
+glow.style.pointerEvents="none";
+glow.style.background="radial-gradient(circle,rgba(92,139,129,.10),transparent 70%)";
+glow.style.transform="translate(-50%,-50%)";
+glow.style.zIndex="-1";
+document.body.appendChild(glow);
+document.addEventListener("mousemove",(e)=>{
+  glow.style.left=e.clientX+"px";
+  glow.style.top=e.clientY+"px";
 });
 </script>
 

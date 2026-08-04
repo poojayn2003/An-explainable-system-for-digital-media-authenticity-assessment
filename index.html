@@ -50,6 +50,28 @@ scroll-behavior:smooth;
 
 }
 
+html[data-theme="light"]{
+--bg:#f3efe4;
+--bg2:#ebe5d6;
+--card:#ffffff;
+--primary:#b23a1f;
+--primary-dark:#7f2712;
+--secondary:#3f6d62;
+--paper:#fbf8f2;
+--paper-dim:#e6ded0;
+--success:#3f6d62;
+--danger:#b23a1f;
+--warning:#8a611f;
+--white:#fbf8f2;
+--text:#221f19;
+--muted:#6a6559;
+--border:rgba(34,31,25,.12);
+}
+
+html[data-theme="light"] body{
+background:linear-gradient(135deg,#f3efe4,#efe9db,#f2ede1);
+}
+
 body{
 
 font-family:'Inter',sans-serif;
@@ -59,9 +81,7 @@ overflow-x:hidden;
 
 }
 
-/*=========================
-Animated Background
-==========================*/
+/* Animated Background */
 
 body::before{
 
@@ -114,9 +134,7 @@ transform:translateY(0px);
   mask-image:radial-gradient(circle at center,black 40%,transparent 100%);
 }
 
-/*=========================
-Navbar
-==========================*/
+/* Navbar */
 
 nav{
 
@@ -268,9 +286,33 @@ cursor:pointer;
 
 }
 
-/*=========================
-Hero
-==========================*/
+.navRight{
+display:flex;
+align-items:center;
+}
+
+.themeToggle{
+width:40px;
+height:40px;
+border-radius:50%;
+border:1px solid var(--border);
+background:transparent;
+color:var(--text);
+cursor:pointer;
+font-size:15px;
+display:flex;
+align-items:center;
+justify-content:center;
+transition:.3s;
+margin-left:14px;
+}
+
+.themeToggle:hover{
+border-color:var(--secondary);
+color:var(--secondary);
+}
+
+/* Hero */
 
 .hero{
 
@@ -430,9 +472,7 @@ border-color:var(--text);
 
 }
 
-/*=========================
-Trust Card — evidence-report styling
-==========================*/
+/* Trust Card — evidence-report styling */
 
 .right{
 
@@ -683,9 +723,7 @@ width:96%;
 }
 }
 
-/*=========================
-Sections
-==========================*/
+/* Sections */
 
 section{
 
@@ -733,9 +771,7 @@ line-height:1.8;
 
 }
 
-/*=========================
-Statistics
-==========================*/
+/* Statistics */
 
 .stats{
 
@@ -797,9 +833,7 @@ text-transform:uppercase;
 
 }
 
-/*=========================
-Workflow
-==========================*/
+/* Workflow */
 
 .timeline{
 
@@ -911,9 +945,7 @@ font-size:14.5px;
 
 }
 
-/*=========================
-Modules
-==========================*/
+/* Modules */
 
 .modules{
 
@@ -977,9 +1009,7 @@ font-size:14.5px;
 
 }
 
-/*=========================
-Trust Score Panel
-==========================*/
+/* Trust Score Panel */
 
 .scorePanel{
 
@@ -1063,9 +1093,7 @@ font-size:13px;
 
 }
 
-/*=========================
-Footer
-==========================*/
+/* Footer */
 
 footer{
 
@@ -1139,9 +1167,7 @@ border-color:var(--primary);
 
 }
 
-/*=========================
-Responsive
-==========================*/
+/* Responsive */
 
 @media(max-width:1100px){
 
@@ -1296,25 +1322,31 @@ animation:none;
 
 <ul>
 
-<li><a href="index.html">Home</a></li>
+<li><a href="index.html" class="active">Home</a></li>
 
-<li><a href="#workflow">Workflow</a></li>
+<li><a href="platform.html">Platform</a></li>
 
-<li><a href="#modules">Modules</a></li>
+<li><a href="upload.html">Verify</a></li>
 
-<li><a href="#about">About</a></li>
+<li><a href="about.html">About</a></li>
 
-<li><a href="#contact">Contact</a></li>
+<li><a href="contact.html">Contact</a></li>
 
 </ul>
 
+<div class="navRight">
+
 <a href="upload.html" class="verifyBtn">Verify Media</a>
+
+<button class="themeToggle" id="themeToggle" title="Toggle dark / light mode"><i class="fa-solid fa-moon"></i></button>
 
 <button class="navToggle" aria-label="Toggle menu" aria-expanded="false">
 
 <i class="fa-solid fa-bars"></i>
 
 </button>
+
+</div>
 
 </nav>
 
@@ -1503,7 +1535,7 @@ Learn More
     
     <p>
     
-    Upload an image, video or audio file securely. Every file is encrypted and assigned a unique digital fingerprint before analysis begins.
+    Upload an image file securely. Every file is encrypted and assigned a unique digital fingerprint before analysis begins.
     
     </p>
     
@@ -1584,34 +1616,6 @@ Learn More
     <p>
     
     Detect AI-generated images, edited photographs, compression artifacts, cloning traces, lighting inconsistencies and hidden manipulation patterns.
-    
-    </p>
-    
-    </div>
-    
-    <div class="module">
-    
-    <i class="fa-solid fa-video"></i>
-    
-    <h3>Video Verification</h3>
-    
-    <p>
-    
-    Analyze frame consistency, temporal artifacts, lip synchronization, GAN fingerprints and deepfake manipulation indicators.
-    
-    </p>
-    
-    </div>
-    
-    <div class="module">
-    
-    <i class="fa-solid fa-volume-high"></i>
-    
-    <h3>Audio Analysis</h3>
-    
-    <p>
-    
-    Detect cloned voices, synthetic speech, frequency anomalies and AI-generated voice characteristics.
     
     </p>
     
@@ -1880,11 +1884,29 @@ Learn More
     </footer>
     
     <script>
-        
-// ===============================
-// Typing Animation
-// ===============================
 
+// Theme Toggle
+(function initTheme() {
+  const saved = localStorage.getItem("trustifyTheme") || "dark";
+  document.documentElement.setAttribute("data-theme", saved);
+  updateThemeIcon(saved);
+})();
+
+function updateThemeIcon(theme) {
+  const btn = document.getElementById("themeToggle");
+  if (!btn) return;
+  btn.innerHTML = theme === "light" ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+}
+
+document.getElementById("themeToggle").onclick = function () {
+  const current = document.documentElement.getAttribute("data-theme") || "dark";
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("trustifyTheme", next);
+  updateThemeIcon(next);
+};
+
+// Typing Animation
 const typingElement = document.getElementById("typing");
 
 const words = [
@@ -1946,10 +1968,7 @@ setTimeout(typeEffect,deleting?45:90);
 typeEffect();
 
 
-// ===============================
 // Counter Animation
-// ===============================
-
 function animateCounter(id,target,suffix=""){
 
 const element=document.getElementById(id);
@@ -1985,10 +2004,7 @@ animateCounter("count3",98,"%");
 animateCounter("count4",540,"+");
 
 
-// ===============================
 // Scroll Reveal
-// ===============================
-
 const observer=new IntersectionObserver((entries)=>{
 
 entries.forEach(entry=>{
@@ -2036,10 +2052,7 @@ observer.observe(item);
 });
 
 
-// ===============================
 // Navbar Blur
-// ===============================
-
 window.addEventListener("scroll",()=>{
 
 const nav=document.querySelector("nav");
@@ -2063,10 +2076,7 @@ nav.style.boxShadow="none";
 });
 
 
-// ===============================
 // Mouse Glow Effect
-// ===============================
-
 const glow=document.createElement("div");
 
 glow.style.position="fixed";
@@ -2096,10 +2106,7 @@ glow.style.top=e.clientY+"px";
 });
 
 
-// ===============================
 // Floating Particles
-// ===============================
-
 for(let i=0;i<24;i++){
 
 const particle=document.createElement("span");
@@ -2163,10 +2170,7 @@ opacity:0;
 document.head.appendChild(style);
 
 
-// ===============================
 // Active Navigation
-// ===============================
-
 const sections=document.querySelectorAll("section");
 
 const navLinks=document.querySelectorAll("nav ul li a");
@@ -2202,10 +2206,7 @@ link.classList.add("active");
 });
 
 
-// ===============================
 // Mobile Nav Toggle
-// ===============================
-
 const navToggle=document.querySelector(".navToggle");
 
 const navList=document.querySelector("nav ul");
@@ -2231,10 +2232,7 @@ navToggle.setAttribute("aria-expanded","false");
 });
 
 
-// ===============================
 // Trust Score Animation
-// ===============================
-
 const score=document.querySelector(".circle");
 
 let trust=0;
@@ -2254,10 +2252,7 @@ clearInterval(trustAnimation);
 },25);
 
 
-// ===============================
 // Verification Status Rotation
-// ===============================
-
 const statusText=document.querySelector(".status span:last-child");
 
 const statusList=[
@@ -2289,10 +2284,7 @@ statusIndex===1?"#b8863f":
 },3500);
 
 
-// ===============================
 // Smooth Anchor Scrolling
-// ===============================
-
 document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
 
 anchor.addEventListener("click",function(e){
@@ -2316,10 +2308,7 @@ behavior:"smooth"
 });
 
 
-// ===============================
 // Hero Card Tilt Effect
-// ===============================
-
 const card=document.querySelector(".verificationCard");
 
 card.addEventListener("mouseenter",()=>{
@@ -2358,11 +2347,7 @@ card.style.animationPlayState="running";
 });
 
 
-// ===============================
-// End
-// ===============================
-
-</script>
+// End</script>
 
 </body>
 

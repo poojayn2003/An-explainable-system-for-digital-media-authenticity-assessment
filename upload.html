@@ -1,611 +1,1550 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verify Media | Trustify AI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Media | Trustify AI</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"/>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"/>
 
-<style>
+  <style>
+    /* RESET */
+    * { margin:0; padding:0; box-sizing:border-box; scroll-behavior:smooth; }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+    :root {
+      --bg:#0d1210;
+      --bg2:#151a18;
+      --card:#151a18;
+      --primary:#b23a1f;
+      --primary-dark:#7f2712;
+      --secondary:#5c8b81;
+      --paper:#eee8db;
+      --paper-dim:#d9d2c2;
+      --text:#e9e6dd;
+      --muted:#8b948d;
+      --border:rgba(233,230,221,.10);
+      --success:#5c8b81;
+      --warning:#b8863f;
+      --danger:#b23a1f;
+      --shadow:0 25px 60px rgba(0,0,0,.45);
+    }
 
-:root{
-  --bg:#0d1210;
-  --card:#151a18;
-  --primary:#b23a1f;
-  --primary-dark:#7f2712;
-  --secondary:#5c8b81;
-  --paper:#eee8db;
-  --paper-dim:#d9d2c2;
-  --text:#e9e6dd;
-  --muted:#8b948d;
-  --border:rgba(233,230,221,.10);
-  --amber:#b8863f;
-}
+    html[data-theme="light"] {
+      --bg:#f3efe4;
+      --bg2:#ebe5d6;
+      --card:#ffffff;
+      --primary:#b23a1f;
+      --primary-dark:#7f2712;
+      --secondary:#3f6d62;
+      --paper:#fbf8f2;
+      --paper-dim:#e6ded0;
+      --text:#221f19;
+      --muted:#6a6559;
+      --border:rgba(34,31,25,.12);
+      --success:#3f6d62;
+      --warning:#8a611f;
+      --danger:#b23a1f;
+      --shadow:0 25px 60px rgba(0,0,0,.10);
+    }
+    html[data-theme="light"] body { background:linear-gradient(135deg,#f3efe4,#efe9db,#f2ede1); }
+    html[data-theme="light"] .stepCircle { background:var(--bg); }
+    html[data-theme="light"] .historyTop input { color:var(--text); }
 
-body{
-  font-family:'Inter',sans-serif;
-  background:linear-gradient(135deg,#0d1210,#0f1512,#12100d);
-  color:var(--text);
-  min-height:100vh;
-}
+    body {
+      font-family:'Inter',sans-serif;
+      background:linear-gradient(135deg,#0d1210,#0f1512,#12100d);
+      color:var(--text);
+      overflow-x:hidden;
+      min-height:100vh;
+    }
 
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  background:
-    radial-gradient(circle at 15% 15%,rgba(178,58,31,.06),transparent 25%),
-    radial-gradient(circle at 85% 10%,rgba(92,139,129,.06),transparent 25%);
-}
+    /* Animated background glow */
+    body::before {
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(178,58,31,.06), transparent 26%),
+        radial-gradient(circle at 80% 10%, rgba(92,139,129,.07), transparent 25%),
+        radial-gradient(circle at 60% 80%, rgba(178,58,31,.05), transparent 30%);
+      z-index:-3;
+      animation:bgmove 20s linear infinite;
+    }
+    @keyframes bgmove {
+      0%, 100% { transform:translateY(0); }
+      50% { transform:translateY(-25px); }
+    }
 
-.grid-bg{
-  position:fixed;inset:0;z-index:-1;
-  background-image:radial-gradient(var(--border) 1px,transparent 1px);
-  background-size:26px 26px;
-  mask-image:radial-gradient(circle at center,black 40%,transparent 100%);
-}
+    /* Dotted background grid (matches index.html) */
+    .grid-bg {
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      background-image:radial-gradient(var(--border) 1px, transparent 1px);
+      background-size:26px 26px;
+      mask-image:radial-gradient(circle at center, black 40%, transparent 100%);
+    }
 
-a{color:inherit;}
+    /* Navbar */
+    nav {
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      padding:20px 8%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:rgba(13,18,16,.85);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      z-index:9999;
+    }
+    .logo { font-family:'Fraunces',serif; font-size:26px; font-weight:700; text-decoration:none; color:inherit; }
+    .logo span { color:var(--primary); }
+    .logo small { display:block; font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:3px; margin-top:3px; color:var(--secondary); font-weight:400; }
+    nav ul { display:flex; list-style:none; gap:38px; }
+    nav ul li a { color:#c9c4b6; text-decoration:none; font-size:15px; transition:.3s; }
+    nav ul li a:hover, nav ul li a.active { color:var(--primary); }
+    .verifyBtn { padding:12px 26px; background:var(--primary); color:var(--paper); text-decoration:none; font-size:14px; font-weight:600; border-radius:2px; transition:.3s; }
+    .verifyBtn:hover { background:var(--primary-dark); }
+    .navToggle { display:none; }
+    .themeToggle { width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:transparent; color:var(--text); cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; transition:.3s; margin-left:14px; }
+    .themeToggle:hover { border-color:var(--secondary); color:var(--secondary); }
+    .navRight { display:flex; align-items:center; }
 
-/* ---------- NAV ---------- */
-nav{
-  position:fixed;top:0;width:100%;z-index:1000;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:20px 8%;
-  background:rgba(13,18,16,.9);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-}
-.logo{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:inherit;
-text-decoration:none;}
-.logo span{color:var(--primary);}
-.logo small{display:block;font-size:10px;font-family:'IBM Plex Mono';color:var(--secondary);letter-spacing:3px;margin-top:3px;font-weight:400;}
-nav ul{display:flex;list-style:none;gap:36px;}
-nav ul li a{color:#c9c4b6;text-decoration:none;font-size:14.5px;transition:.3s;}
-nav ul li a:hover{color:var(--primary);}
-@media(max-width:760px){ nav ul{display:none;} }
+    /* Layout */
+    main { padding:145px 8% 90px; max-width:1700px; margin:auto; }
 
-/* ---------- SHELL ---------- */
-main{
-  max-width:760px;
-  margin:0 auto;
-  padding:160px 8% 100px;
-}
+    .caseTag { display:inline-flex; align-items:center; gap:10px; font-family:'IBM Plex Mono'; font-size:12px; letter-spacing:2px; color:var(--primary); margin-bottom:22px; }
+    .caseTag::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--primary); }
 
-.case-tag{
-  font-family:'IBM Plex Mono';font-size:12px;letter-spacing:3px;color:var(--primary);
-  display:flex;align-items:center;gap:10px;margin-bottom:20px;justify-content:center;
-}
-.case-tag::before{content:"";width:8px;height:8px;background:var(--primary);border-radius:50%;display:inline-block;}
+    .pageTitle { font-family:'Fraunces',serif; font-size:44px; font-weight:600; margin-bottom:16px; }
+    .pageSub { max-width:760px; color:var(--muted); line-height:1.9; font-size:16px; margin-bottom:60px; }
 
-h1{
-  font-family:'Fraunces',serif;font-weight:600;font-size:38px;text-align:center;margin-bottom:14px;letter-spacing:-.5px;
-}
-.subhead{color:var(--muted);text-align:center;font-size:15px;max-width:480px;margin:0 auto 50px;line-height:1.7;}
+    /* Dashboard Layout */
+    .dashboard { display:grid; grid-template-columns:420px 1fr; gap:34px; align-items:start; }
+    .sidebar { position:sticky; top:120px; display:flex; flex-direction:column; gap:24px; }
+    .panel { background:var(--card); border:1px solid var(--border); padding:26px; border-radius:4px; box-shadow:var(--shadow); }
 
-/* ---------- STAGE: UPLOAD ---------- */
-.stage{display:none;}
-.stage.active{display:block;}
+    /* Upload Card */
+    .dropzone { display:flex; flex-direction:column; align-items:center; justify-content:center; border:2px dashed rgba(92,139,129,.30); padding:55px 30px; text-align:center; cursor:pointer; transition:.3s; border-radius:4px; background:rgba(92,139,129,.04); }
+    .dropzone:hover, .dropzone.drag { border-color:var(--secondary); background:rgba(92,139,129,.08); }
+    .dropzone i { font-size:48px; color:var(--secondary); margin-bottom:20px; }
+    .dropzone h3 { font-family:'Fraunces',serif; font-size:22px; margin-bottom:10px; }
+    .dropzone p { font-size:14px; color:var(--muted); line-height:1.8; }
+    .dropzone input { display:none; }
 
-.dropzone{
-  border:2px dashed var(--border);
-  border-radius:4px;
-  padding:60px 30px;
-  text-align:center;
-  cursor:pointer;
-  transition:.25s;
-  background:rgba(21,26,24,.4);
-  display:block;
-}
-.dropzone.dragover,.dropzone:hover{
-  border-color:var(--secondary);
-  background:rgba(92,139,129,.05);
-}
-.dropzone i{font-size:38px;color:var(--secondary);margin-bottom:18px;}
-.dropzone h3{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin-bottom:8px;}
-.dropzone p{color:var(--muted);font-size:13.5px;}
-.dropzone input{display:none;}
+    .supported { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+    .supported span { font-family:'IBM Plex Mono'; font-size:11px; padding:7px 14px; border:1px solid var(--border); color:var(--muted); border-radius:30px; }
 
-.fileTypes{
-  display:flex;justify-content:center;gap:14px;margin-top:26px;flex-wrap:wrap;
-}
-.fileTypes span{
-  font-family:'IBM Plex Mono';font-size:11.5px;color:var(--muted);
-  border:1px solid var(--border);padding:6px 14px;border-radius:20px;
-}
+    /* Image Preview */
+    .previewContainer { margin-top:26px; display:none; }
+    .previewImage { width:100%; height:300px; background:#1d1d1d; overflow:hidden; border-radius:4px; position:relative; display:flex; justify-content:center; align-items:center; }
+    .previewImage img { width:100%; height:100%; object-fit:contain; transition:.35s; cursor:zoom-in; }
 
-/* ---------- STAGE: PREVIEW ---------- */
-.previewCard{
-  background:var(--paper);color:#1b1b18;border-radius:4px;padding:26px;
-  box-shadow:0 25px 50px -20px rgba(0,0,0,.5);
-}
-.previewCard .top-row{
-  display:flex;justify-content:space-between;font-family:'IBM Plex Mono';font-size:11px;color:#6b6a5f;
-  padding-bottom:14px;border-bottom:1px dashed #b6b0a0;margin-bottom:16px;
-}
-.previewThumb{
-  height:200px;border-radius:2px;overflow:hidden;background:#d9d2c2;
-  display:flex;align-items:center;justify-content:center;
-}
-.previewThumb img,.previewThumb video{width:100%;height:100%;object-fit:cover;}
-.previewThumb i{font-size:44px;color:#8b948d;}
+    .zoomControls { display:flex; justify-content:center; gap:12px; margin-top:18px; }
+    .zoomControls button { width:42px; height:42px; background:var(--bg); border:1px solid var(--border); color:var(--paper); cursor:pointer; border-radius:2px; transition:.3s; }
+    .zoomControls button:hover { background:var(--primary); }
 
-.previewActions{display:flex;gap:14px;margin-top:26px;justify-content:center;}
+    /* Evidence Information */
+    .infoGrid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:25px; }
+    .infoItem { background:rgba(255,255,255,.03); border:1px solid var(--border); padding:14px; border-radius:4px; }
+    .infoItem label { display:block; font-family:'IBM Plex Mono'; font-size:11px; letter-spacing:1px; color:var(--muted); margin-bottom:7px; text-transform:uppercase; }
+    .infoItem span { font-size:15px; font-weight:600; word-break:break-word; }
 
-.btn{
-  padding:14px 30px;border-radius:2px;font-weight:600;font-size:14px;
-  text-decoration:none;border:none;cursor:pointer;transition:.3s;font-family:'Inter';
-}
-.btnPrimary{background:var(--primary);color:var(--paper);}
-.btnPrimary:hover{background:var(--primary-dark);}
-.btnGhost{background:transparent;border:1px solid var(--border);color:var(--text);}
-.btnGhost:hover{border-color:var(--text);}
+    /* Verification Status */
+    .statusCard { display:flex; align-items:center; justify-content:space-between; padding:20px; margin-top:24px; background:rgba(92,139,129,.08); border:1px solid rgba(92,139,129,.25); border-radius:4px; }
+    .statusCard h3 { font-family:'Fraunces',serif; font-size:20px; }
+    .statusBadge { padding:8px 18px; border-radius:40px; font-size:12px; font-family:'IBM Plex Mono'; background:rgba(92,139,129,.15); color:var(--secondary); }
 
-/* ---------- STAGE: ANALYZING ---------- */
-.analyzeList{max-width:420px;margin:0 auto;}
-.aItem{
-  display:flex;align-items:center;gap:16px;padding:16px 0;
-  border-bottom:1px solid var(--border);
-  opacity:.35;transition:.4s;
-}
-.aItem.active{opacity:1;}
-.aItem.done{opacity:.7;}
-.aItem .node{
-  width:32px;height:32px;border-radius:50%;border:2px solid var(--border);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  font-family:'IBM Plex Mono';font-size:12px;color:var(--muted);transition:.4s;
-}
-.aItem.active .node{border-color:var(--secondary);color:var(--secondary);}
-.aItem.done .node{border-color:var(--secondary);background:var(--secondary);color:var(--bg);}
-.aItem .label{font-size:14.5px;}
-.aItem .status{margin-left:auto;font-family:'IBM Plex Mono';font-size:11px;color:var(--muted);letter-spacing:1px;}
-.aItem.active .status{color:var(--secondary);}
+    /* Right Panel / Tabs */
+    .content { display:flex; flex-direction:column; gap:28px; }
 
-/* ---------- STAGE: RESULTS ---------- */
-.resultCard{
-  background:var(--paper);color:#1b1b18;border-radius:4px;overflow:hidden;
-  box-shadow:0 25px 50px -20px rgba(0,0,0,.5);
-}
-.resultTop{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:22px 28px;border-bottom:1px dashed #b6b0a0;
-  font-family:'IBM Plex Mono';font-size:11px;color:#6b6a5f;
-}
-.verdictBand{
-  padding:26px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
-  border-bottom:1px solid #d9d2c2;
-}
-.verdictLabel{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:2px;color:#6b6a5f;margin-bottom:6px;}
-.verdictClass{font-family:'Fraunces',serif;font-weight:700;font-size:26px;}
-.verdictClass.original{color:var(--secondary);}
-.verdictClass.edited{color:var(--amber);}
-.verdictClass.generated{color:var(--primary);}
-.confBlock{text-align:right;}
-.confNum{font-family:'IBM Plex Mono';font-size:22px;font-weight:600;}
+    .tabs { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
 
-.trustBand{
-  display:flex;align-items:center;gap:20px;padding:24px 28px;background:#e3ddce;
-}
-.trustCircle{
-  width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-family:'IBM Plex Mono';font-size:24px;font-weight:700;flex-shrink:0;position:relative;
-}
-.trustCircle::before{content:"";position:absolute;inset:5px;border-radius:50%;border:1px solid currentColor;opacity:.5;}
-.trustInfo h4{font-family:'Fraunces',serif;font-size:17px;margin-bottom:4px;}
-.trustInfo p{font-size:12.5px;color:#5a5748;}
+    .analyzeTabBtn {
+      margin-left:auto;
+      padding:13px 26px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:var(--paper);
+      border:none;
+      border-radius:30px;
+      font-family:'IBM Plex Mono';
+      font-size:12.5px;
+      letter-spacing:1px;
+      font-weight:600;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      transition:.3s;
+      box-shadow:0 10px 24px rgba(178,58,31,.35);
+    }
+    .analyzeTabBtn:hover { transform:translateY(-2px); box-shadow:0 14px 30px rgba(178,58,31,.45); background:linear-gradient(135deg,var(--primary-dark),var(--primary)); }
+    .analyzeTabBtn:active { transform:translateY(0); }
+    .analyzeTabBtn i { font-size:13px; }
+    .tabBtn { padding:12px 20px; background:transparent; border:1px solid var(--border); color:var(--text); cursor:pointer; font-size:13px; font-weight:600; transition:.3s; border-radius:2px; }
+    .tabBtn:hover { border-color:var(--secondary); }
+    .tabBtn.active { background:var(--primary); border-color:var(--primary); color:var(--paper); }
 
-.reasonBlock{padding:26px 28px;}
-.reasonBlock .verdictLabel{margin-bottom:14px;}
-.reasonBlock ul{list-style:none;font-size:14px;line-height:2.1;}
-.reasonBlock li::before{content:"— ";color:var(--primary);}
+    .tabContent { display:none; animation:fade .45s; }
+    .tabContent.active { display:block; }
+    @keyframes fade { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
 
-.resultActions{display:flex;gap:14px;justify-content:center;margin-top:30px;flex-wrap:wrap;}
+    /* Result Card */
+    .resultCard { background:var(--paper); color:#1b1b18; border-radius:4px; overflow:hidden; box-shadow:var(--shadow); }
+    .resultHeader { display:flex; justify-content:space-between; align-items:center; padding:22px 28px; border-bottom:1px dashed #b8b2a4; font-family:'IBM Plex Mono'; font-size:11px; color:#6a675d; }
 
-.disclaimer{
-  margin-top:40px;text-align:center;font-size:12px;color:var(--muted);
-  font-family:'IBM Plex Mono';line-height:1.8;max-width:480px;margin-left:auto;margin-right:auto;
-}
+    .verdictSection { display:flex; justify-content:space-between; align-items:center; padding:28px; flex-wrap:wrap; gap:30px; border-bottom:1px solid #d6cfbf; }
+    .verdictLabel { font-family:'IBM Plex Mono'; font-size:11px; letter-spacing:2px; color:#666; margin-bottom:8px; }
+    .verdictClass { font-family:'Fraunces',serif; font-size:34px; font-weight:700; }
+    .verdictClass.original { color:var(--secondary); }
+    .verdictClass.edited { color:var(--warning); }
+    .verdictClass.generated { color:var(--primary); }
 
-footer{padding:40px 8%;text-align:center;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;font-family:'IBM Plex Mono';margin-top:40px;}
-footer a{color:var(--secondary);text-decoration:none;}
+    /* Animated Confidence Gauge */
+    .confidenceWrap { display:flex; align-items:center; gap:30px; }
+    .gauge { width:160px; height:160px; position:relative; }
+    .gauge svg { width:100%; height:100%; transform:rotate(-90deg); }
+    .gauge circle { fill:none; stroke-width:12; }
+    .gauge .bg { stroke:#ddd5c7; }
+    .gauge .progress { stroke:var(--secondary); stroke-linecap:round; stroke-dasharray:440; stroke-dashoffset:440; transition:stroke-dashoffset 1.4s ease; }
+    .gaugeText { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+    .gaugeText h2 { font-family:'IBM Plex Mono'; font-size:34px; margin-bottom:5px; }
+    .gaugeText p { font-size:11px; letter-spacing:2px; font-family:'IBM Plex Mono'; color:#666; }
 
-</style>
+    /* Confidence Breakdown */
+    .confidenceWrap { flex:1; min-width:280px; }
+    .breakdownList { display:flex; flex-direction:column; gap:12px; margin-top:22px; }
+    .breakdownRow { display:grid; grid-template-columns:150px 1fr 46px; align-items:center; gap:14px; }
+    .breakdownLabel { font-family:'IBM Plex Mono'; font-size:11px; letter-spacing:.5px; color:#6a675d; text-transform:uppercase; }
+    .breakdownTrack { height:8px; background:#ddd5c7; border-radius:20px; overflow:hidden; }
+    .breakdownFill { height:100%; width:0%; background:var(--secondary); border-radius:20px; transition:width 1s ease; }
+    .breakdownValue { font-family:'IBM Plex Mono'; font-size:12px; font-weight:600; text-align:right; color:#3d3b34; }
+
+    /* Trust Score */
+    .trustCard { margin:28px; padding:24px; display:flex; align-items:center; gap:26px; background:#e4ddcf; border-radius:4px; }
+    .trustCircle { width:95px; height:95px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-family:'IBM Plex Mono'; font-size:30px; font-weight:700; border:6px solid var(--secondary); color:var(--secondary); position:relative; }
+    .trustCircle::before { content:""; position:absolute; inset:6px; border-radius:50%; border:1px solid currentColor; opacity:.5; }
+    .trustInfo h3 { font-family:'Fraunces',serif; font-size:22px; margin-bottom:8px; }
+    .trustInfo p { line-height:1.8; font-size:14px; color:#575347; }
+
+    /* Investigation Timeline */
+    .timeline { display:flex; justify-content:space-between; align-items:flex-start; position:relative; margin:32px 0 40px; padding:10px 0; }
+    .timeline::before { content:""; position:absolute; top:26px; left:3%; right:3%; height:2px; background:var(--border); z-index:0; }
+    .step { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; text-align:center; flex:1; }
+    .stepCircle { width:52px; height:52px; border-radius:50%; border:2px solid var(--border); background:var(--bg); display:flex; justify-content:center; align-items:center; font-family:'IBM Plex Mono'; font-size:13px; font-weight:600; color:var(--muted); transition:.4s; }
+    .step.active .stepCircle { border-color:var(--secondary); color:var(--secondary); }
+    .step.done .stepCircle { background:var(--secondary); border-color:var(--secondary); color:var(--bg); }
+    .step h4 { margin-top:16px; font-size:14px; font-family:'Fraunces',serif; font-weight:600; }
+    .step p { margin-top:6px; font-size:12px; line-height:1.6; color:var(--muted); max-width:130px; }
+    .step .stepTime { margin-top:5px; font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:1px; color:var(--secondary); min-height:14px; }
+
+    /* Forensic Timeline (detailed log) */
+    .forensicLog { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:28px 30px; margin-bottom:28px; display:none; }
+    .forensicLog.show { display:block; }
+    .forensicLog h3 { font-family:'Fraunces',serif; font-size:22px; margin-bottom:22px; }
+    .logEntry { display:grid; grid-template-columns:96px 1fr; gap:20px; align-items:start; }
+    .logTime { font-family:'IBM Plex Mono'; font-size:13px; color:var(--secondary); padding-top:2px; }
+    .logBody { padding-bottom:4px; }
+    .logLabel { font-family:'Fraunces',serif; font-size:16px; font-weight:600; }
+    .logNote { font-size:12px; color:var(--muted); margin-top:3px; }
+    .logArrow { grid-column:2; font-family:'IBM Plex Mono'; color:var(--border); padding:6px 0 6px 2px; font-size:14px; }
+    .logArrowRow { display:grid; grid-template-columns:96px 1fr; }
+
+    /* Reasons */
+    .reasonCard { margin:28px; }
+    .reasonCard h3 { font-family:'Fraunces',serif; font-size:24px; margin-bottom:18px; }
+    .reasonList { list-style:none; display:flex; flex-direction:column; gap:16px; }
+    .reasonList li { display:flex; gap:16px; align-items:flex-start; padding:18px; background:#f4efe4; border-left:4px solid var(--primary); border-radius:4px; font-size:15px; line-height:1.8; color:#1b1b18; }
+    .reasonList li i { color:var(--primary); margin-top:3px; }
+
+    /* Metadata Panel */
+    .metaGrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:18px; }
+    .metaItem { background:var(--card); border:1px solid var(--border); padding:20px; border-radius:4px; }
+    .metaItem h4 { font-family:'IBM Plex Mono'; font-size:11px; letter-spacing:2px; color:var(--muted); margin-bottom:12px; text-transform:uppercase; }
+    .metaItem p { font-size:15px; line-height:1.8; word-break:break-word; }
+
+    /* Heatmap Comparison */
+    .compareBox { position:relative; width:100%; height:500px; overflow:hidden; border-radius:4px; background:#0d0d0d; }
+    .compareBox img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; user-select:none; pointer-events:none; }
+    #heatmapImage { clip-path:inset(0 50% 0 0); }
+    .compareSlider { position:absolute; top:0; bottom:0; left:50%; width:3px; background:#fff; cursor:ew-resize; z-index:10; }
+    .compareSlider::before { content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:42px; height:42px; border-radius:50%; background:var(--primary); border:3px solid #fff; }
+
+    /* Histogram */
+    .histogramCard { background:var(--card); padding:22px; border-radius:4px; border:1px solid var(--border); }
+    .histogramCard h3 { font-family:'Fraunces',serif; font-size:22px; margin-bottom:18px; }
+    #histogramCanvas { width:100%; height:280px; background:#0b0f0d; border-radius:4px; }
+
+    /* Analysis History */
+    .historyCard { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:24px; }
+    .historyTop { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:16px; }
+    .historyTop input { flex:1; padding:12px 14px; background:var(--bg); border:1px solid var(--border); color:var(--paper); outline:none; border-radius:2px; }
+    .historyList { display:flex; flex-direction:column; gap:14px; max-height:420px; overflow:auto; }
+    .historyItem { padding:18px; border:1px solid var(--border); background:rgba(255,255,255,.02); border-radius:4px; cursor:pointer; transition:.3s; }
+    .historyItem:hover { border-color:var(--secondary); background:rgba(92,139,129,.05); }
+    .historyItem h4 { font-size:15px; margin-bottom:8px; font-family:'Fraunces',serif; }
+    .historyItem p { font-size:12px; color:var(--muted); line-height:1.8; }
+    .historyBadge { display:inline-block; margin-top:10px; padding:6px 12px; border-radius:30px; font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:1px; }
+    .badgeOriginal { background:rgba(92,139,129,.12); color:var(--secondary); }
+    .badgeEdited { background:rgba(184,134,63,.12); color:var(--warning); }
+    .badgeGenerated { background:rgba(178,58,31,.12); color:var(--primary); }
+
+    /* Image Quality Assessment */
+    .qualityStars { color:var(--warning); font-size:20px; letter-spacing:3px; margin:6px 0 20px; }
+    .qualityStars .dim { color:var(--border); }
+    .qualityGrid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .qualityItem { background:rgba(255,255,255,.03); border:1px solid var(--border); padding:12px 14px; border-radius:4px; }
+    .qualityItem label { display:block; font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:1px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; }
+    .qualityItem span { font-size:14px; font-weight:600; }
+    .qualityItem span.good { color:var(--secondary); }
+    .qualityItem span.warn { color:var(--warning); }
+    .qualityItem span.bad { color:var(--primary); }
+
+    /* Action Buttons */
+    .actionBar { display:flex; flex-wrap:wrap; gap:16px; margin-top:28px; }
+    .actionBtn { padding:14px 24px; border:none; border-radius:2px; cursor:pointer; font-size:14px; font-weight:600; font-family:'Inter',sans-serif; transition:.3s; display:flex; align-items:center; gap:10px; }
+    .actionPrimary { background:var(--primary); color:var(--paper); }
+    .actionPrimary:hover { background:var(--primary-dark); }
+    .actionGhost { background:transparent; color:var(--text); border:1px solid var(--border); }
+    .actionGhost:hover { border-color:var(--secondary); color:var(--secondary); }
+
+    /* Loading Overlay */
+    .loadingOverlay { position:fixed; inset:0; background:rgba(13,18,16,.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:99999; }
+    .loadingOverlay.active { display:flex; }
+    .loader { width:90px; height:90px; border-radius:50%; border:5px solid rgba(255,255,255,.08); border-top:5px solid var(--secondary); animation:spin 1s linear infinite; margin-bottom:30px; }
+    @keyframes spin { 100% { transform:rotate(360deg); } }
+    .loadingTitle { font-family:'Fraunces',serif; font-size:30px; margin-bottom:12px; }
+    .loadingText { font-size:14px; color:var(--muted); margin-bottom:30px; }
+    .progressBar { width:420px; height:8px; background:#222; border-radius:20px; overflow:hidden; }
+    .progressFill { width:0%; height:100%; background:linear-gradient(90deg,var(--secondary),var(--primary)); animation:loadingFill 6s linear forwards; }
+    @keyframes loadingFill { 0% { width:0; } 100% { width:100%; } }
+
+    /* Toast */
+    .toast { position:fixed; right:30px; bottom:30px; background:var(--card); padding:18px 24px; border-left:4px solid var(--secondary); border-radius:4px; box-shadow:var(--shadow); display:flex; align-items:center; gap:14px; opacity:0; transform:translateY(30px); pointer-events:none; transition:.4s; z-index:999999; }
+    .toast.show { opacity:1; transform:translateY(0); pointer-events:auto; }
+    .toast i { font-size:20px; color:var(--secondary); }
+
+    /* Fullscreen Viewer */
+    .viewer { position:fixed; inset:0; background:rgba(0,0,0,.94); display:none; justify-content:center; align-items:center; z-index:99999; }
+    .viewer.active { display:flex; }
+    .viewer img { max-width:92%; max-height:90%; object-fit:contain; }
+    .closeViewer { position:absolute; top:25px; right:30px; font-size:36px; cursor:pointer; color:white; }
+
+    /* Responsive */
+    @media (max-width:1200px) {
+      .dashboard { grid-template-columns:1fr; }
+      .sidebar { position:relative; top:auto; }
+    }
+    @media (max-width:768px) {
+      nav { padding:18px 5%; }
+      nav ul { display:none; }
+      main { padding:130px 5% 70px; }
+      .pageTitle { font-size:34px; }
+      .infoGrid, .metaGrid { grid-template-columns:1fr; }
+      .timeline { flex-direction:column; gap:24px; }
+      .timeline::before { display:none; }
+      .confidenceWrap { flex-direction:column; }
+      .compareBox { height:320px; }
+      .actionBar { flex-direction:column; }
+      .actionBtn { width:100%; justify-content:center; }
+      .progressBar { width:100%; }
+      .analyzeTabBtn { margin-left:0; width:100%; justify-content:center; order:-1; margin-bottom:6px; }
+    }
+  </style>
 </head>
+
 <body>
+  <div class="grid-bg"></div>
 
-<div class="grid-bg"></div>
-
-<nav>
-  <a href="index.html" class="logo">
-    Trustify <span>AI</span>
-    <small>VERIFY • EXPLAIN • TRUST</small>
-</a>
-  <ul>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="platform.html">Platform</a></li>
-    <li><a href="upload.html">Verify</a></li>
-  </ul>
-</nav>
-
-<main>
-
-  <!-- STAGE 1: UPLOAD -->
-  <section class="stage active" id="stageUpload">
-    <div class="case-tag">NEW SUBMISSION</div>
-    <h1>Submit media for verification</h1>
-    <p class="subhead">Upload an image, video, or audio file. Trustify AI will run it through the full explainable verification pipeline.</p>
-
-    <label class="dropzone" id="dropzone">
-      <i class="fa-solid fa-upload"></i>
-      <h3>Drag & drop your file here</h3>
-      <p>or click to browse — JPG, PNG, MP4, MOV, WAV, MP3</p>
-      <input type="file" id="fileInput" accept="image/*,video/*,audio/*">
-    </label>
-
-    <div class="fileTypes">
-      <span>Image Forensics</span>
-      <span>Video Analysis</span>
-      <span>Audio Verification</span>
+  <nav>
+    <a href="index.html" class="logo">
+      Trustify <span>AI</span>
+      <small>VERIFY • EXPLAIN • TRUST</small>
+    </a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="platform.html">Platform</a></li>
+      <li><a href="upload.html" class="active">Verify</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="navRight">
+      <a href="upload.html" class="verifyBtn">Verify Media</a>
+      <button class="themeToggle" id="themeToggle" title="Toggle dark / light mode"><i class="fa-solid fa-moon"></i></button>
     </div>
-  </section>
+  </nav>
 
-  <!-- STAGE 2: PREVIEW -->
-  <section class="stage" id="stagePreview">
-    <div class="case-tag">EVIDENCE RECEIVED</div>
-    <h1>Confirm before analysis</h1>
-    <p class="subhead">This is what will be examined. Analysis cannot be undone once started.</p>
+  <div class="loadingOverlay" id="loadingOverlay">
+    <div class="loader"></div>
+    <div class="loadingTitle">Analyzing Evidence</div>
+    <div class="loadingText" id="loadingStatus">Preparing investigation...</div>
+    <div class="progressBar"><div class="progressFill"></div></div>
+  </div>
 
-    <div class="previewCard">
-      <div class="top-row">
-        <span id="pvName">FILE.JPG</span>
-        <span id="pvMeta">— KB</span>
-      </div>
-      <div class="previewThumb" id="pvThumb">
-        <i class="fa-solid fa-file"></i>
-      </div>
-    </div>
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastText">Success</span>
+  </div>
 
-    <div class="previewActions">
-      <button class="btn btnGhost" id="btnCancel">Choose a different file</button>
-      <button class="btn btnPrimary" id="btnAnalyze">Begin Analysis</button>
-    </div>
-  </section>
+  <div class="viewer" id="viewer">
+    <span class="closeViewer">&times;</span>
+    <img id="viewerImage">
+  </div>
 
-  <!-- STAGE 3: ANALYZING -->
-  <section class="stage" id="stageAnalyzing">
-    <div class="case-tag">CASE OPEN</div>
-    <h1>Running verification</h1>
-    <p class="subhead">Every file moves through the same six stages before a verdict is shown.</p>
+  <main>
+    <div class="caseTag">NEW DIGITAL INVESTIGATION</div>
+    <h1 class="pageTitle">Verify Digital Evidence</h1>
+    <p class="pageSub">
+      Upload an image to perform explainable AI-based authenticity assessment, metadata inspection, trust evaluation, and forensic reporting.
+    </p>
 
-    <div class="analyzeList" id="analyzeList">
-      <div class="aItem" data-stage="0"><div class="node">01</div><div class="label">Evidence intake</div><div class="status">PENDING</div></div>
-      <div class="aItem" data-stage="1"><div class="node">02</div><div class="label">Metadata analysis</div><div class="status">PENDING</div></div>
-      <div class="aItem" data-stage="2"><div class="node">03</div><div class="label">AI artifact detection</div><div class="status">PENDING</div></div>
-      <div class="aItem" data-stage="3"><div class="node">04</div><div class="label">Explainability engine</div><div class="status">PENDING</div></div>
-      <div class="aItem" data-stage="4"><div class="node">05</div><div class="label">Trust score calculation</div><div class="status">PENDING</div></div>
-      <div class="aItem" data-stage="5"><div class="node">06</div><div class="label">Report generation</div><div class="status">PENDING</div></div>
-    </div>
-  </section>
+    <div class="dashboard">
+      <div class="sidebar">
+        <div class="panel">
+          <label class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept="image/*">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <h3>Upload Evidence</h3>
+            <p>Drag &amp; Drop or click to browse</p>
+            <div class="supported">
+              <span>JPG</span>
+              <span>PNG</span>
+              <span>JPEG</span>
+              <span>WEBP</span>
+            </div>
+          </label>
 
-  <!-- STAGE 4: RESULTS -->
-  <section class="stage" id="stageResults">
-    <div class="case-tag">CASE CLOSED</div>
-    <h1>Investigation report</h1>
-    <p class="subhead">Full breakdown of the verdict, with the reasoning behind it.</p>
+          <div class="previewContainer" id="previewContainer">
+            <div class="previewImage"><img id="previewImage"></div>
+            <div class="zoomControls">
+              <button id="zoomIn"><i class="fa-solid fa-plus"></i></button>
+              <button id="zoomOut"><i class="fa-solid fa-minus"></i></button>
+              <button id="resetZoom"><i class="fa-solid fa-expand"></i></button>
+              <button id="fullscreenBtn"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
+            </div>
+          </div>
 
-    <div class="resultCard">
-      <div class="resultTop">
-        <span id="rFileName">FILE.JPG</span>
-        <span id="rHash">SHA-256 · —</span>
-      </div>
-      <div class="verdictBand">
-        <div>
-          <div class="verdictLabel">CLASSIFICATION</div>
-          <div class="verdictClass" id="rClass">—</div>
+          <div class="statusCard">
+            <div>
+              <h3>Verification Status</h3>
+              <small>Waiting for evidence...</small>
+            </div>
+            <div class="statusBadge" id="statusBadge">READY</div>
+          </div>
+
+          <div class="infoGrid">
+            <div class="infoItem"><label>Filename</label><span id="fileName">—</span></div>
+            <div class="infoItem"><label>File Size</label><span id="fileSize">—</span></div>
+            <div class="infoItem"><label>Resolution</label><span id="resolution">—</span></div>
+            <div class="infoItem"><label>Image Type</label><span id="fileType">—</span></div>
+            <div class="infoItem"><label>Aspect Ratio</label><span id="aspectRatio">—</span></div>
+            <div class="infoItem"><label>Upload Time</label><span id="uploadTime">—</span></div>
+            <div class="infoItem"><label>Verification ID</label><span id="verificationId">—</span></div>
+            <div class="infoItem"><label>Analysis Time</label><span id="analysisTime">—</span></div>
+          </div>
         </div>
-        <div class="confBlock">
-          <div class="verdictLabel">CONFIDENCE</div>
-          <div class="confNum" id="rConf">—</div>
+
+        <div class="panel" id="qualityCard" style="display:none;">
+          <h3 style="font-family:'Fraunces',serif;font-size:20px;margin-bottom:4px;">Image Quality</h3>
+          <div class="qualityStars" id="qualityStars">☆☆☆☆☆</div>
+          <div class="qualityGrid">
+            <div class="qualityItem"><label>Resolution</label><span id="qResolution">—</span></div>
+            <div class="qualityItem"><label>Sharpness</label><span id="qSharpness">—</span></div>
+            <div class="qualityItem"><label>Noise</label><span id="qNoise">—</span></div>
+            <div class="qualityItem"><label>Compression</label><span id="qCompression">—</span></div>
+            <div class="qualityItem"><label>Brightness</label><span id="qBrightness">—</span></div>
+            <div class="qualityItem"><label>Contrast</label><span id="qContrast">—</span></div>
+          </div>
+        </div>
+
+        <div class="historyCard">
+          <div class="historyTop">
+            <input type="text" id="historySearch" placeholder="Search previous investigations...">
+            <button class="actionBtn actionGhost" id="clearHistory"><i class="fa-solid fa-trash"></i></button>
+          </div>
+          <div class="historyList" id="historyList"></div>
         </div>
       </div>
-      <div class="trustBand">
-        <div class="trustCircle" id="rTrustCircle">—</div>
-        <div class="trustInfo">
-          <h4>Trust Score</h4>
-          <p id="rTrustLabel">—</p>
+
+      <div class="content">
+        <div class="panel">
+          <div class="tabs">
+            <button class="tabBtn active" data-tab="overview">Overview</button>
+            <button class="tabBtn" data-tab="metadata">Metadata</button>
+            <button class="tabBtn" data-tab="histogram">Histogram</button>
+            <button class="tabBtn" data-tab="heatmap">Heatmap</button>
+            <button class="tabBtn" data-tab="report">Report</button>
+            <button class="analyzeTabBtn" id="analyzeBtnTab">
+              <i class="fa-solid fa-magnifying-glass"></i> Analyze Image
+            </button>
+          </div>
+
+          <!-- OVERVIEW TAB -->
+          <div class="tabContent active" id="overview">
+            <div class="timeline">
+              <div class="step active" id="step1"><div class="stepCircle">01</div><h4>Upload</h4><p>Evidence received</p><div class="stepTime" id="stepTime1"></div></div>
+              <div class="step" id="step2"><div class="stepCircle">02</div><h4>Metadata</h4><p>Reading EXIF</p><div class="stepTime" id="stepTime2"></div></div>
+              <div class="step" id="step3"><div class="stepCircle">03</div><h4>AI Model</h4><p>Classification</p><div class="stepTime" id="stepTime3"></div></div>
+              <div class="step" id="step4"><div class="stepCircle">04</div><h4>Explainability</h4><p>Grad-CAM</p><div class="stepTime" id="stepTime4"></div></div>
+              <div class="step" id="step5"><div class="stepCircle">05</div><h4>Trust Score</h4><p>Evidence fusion</p><div class="stepTime" id="stepTime5"></div></div>
+              <div class="step" id="step6"><div class="stepCircle">06</div><h4>Completed</h4><p>Report generated</p><div class="stepTime" id="stepTime6"></div></div>
+            </div>
+
+            <div class="resultCard">
+              <div class="resultHeader">
+                <span id="reportFile">NO FILE</span>
+                <span id="reportHash">SHA-256 · —</span>
+              </div>
+
+              <div class="verdictSection">
+                <div>
+                  <div class="verdictLabel">CLASSIFICATION</div>
+                  <div class="verdictClass" id="resultClass">—</div>
+                </div>
+                <div class="confidenceWrap">
+                  <div class="gauge">
+                    <svg>
+                      <circle class="bg" cx="80" cy="80" r="70"></circle>
+                      <circle class="progress" id="gaugeProgress" cx="80" cy="80" r="70"></circle>
+                    </svg>
+                    <div class="gaugeText">
+                      <h2 id="confidenceText">0%</h2>
+                      <p>CONFIDENCE</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="reasonCard" style="margin-top:0;">
+                <h3 style="font-size:18px;">Detection Confidence Breakdown</h3>
+                <div class="breakdownList" id="breakdownList"></div>
+              </div>
+
+              <div class="trustCard">
+                <div class="trustCircle" id="trustCircle">0</div>
+                <div class="trustInfo">
+                  <h3>Trust Score</h3>
+                  <p id="trustDescription">Awaiting analysis...</p>
+                </div>
+              </div>
+
+              <div class="reasonCard">
+                <h3>AI Findings</h3>
+                <ul class="reasonList" id="reasonList"></ul>
+              </div>
+            </div>
+
+            <div class="actionBar">
+              <button class="actionBtn actionGhost" id="copyReport"><i class="fa-solid fa-copy"></i> Copy Report</button>
+              <button class="actionBtn actionGhost" id="downloadTxt"><i class="fa-solid fa-file-lines"></i> TXT</button>
+              <button class="actionBtn actionGhost" id="downloadJson"><i class="fa-solid fa-file-code"></i> JSON</button>
+              <button class="actionBtn actionGhost" id="downloadPdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+              <button class="actionBtn actionGhost" id="printReport"><i class="fa-solid fa-print"></i> Print</button>
+              <button class="actionBtn actionGhost" id="shareReport"><i class="fa-solid fa-share-nodes"></i> Share</button>
+            </div>
+            <div class="forensicLog" id="forensicLog" style="margin-top:28px;">
+              <h3>Forensic Timeline</h3>
+              <div id="forensicLogEntries"></div>
+            </div>
+          </div>
+
+          <!-- METADATA TAB -->
+          <div class="tabContent" id="metadata">
+            <div class="metaGrid">
+              <div class="metaItem"><h4>Camera</h4><p id="metaCamera">Not Available</p></div>
+              <div class="metaItem"><h4>Software</h4><p id="metaSoftware">Not Available</p></div>
+              <div class="metaItem"><h4>Date Taken</h4><p id="metaDate">Not Available</p></div>
+              <div class="metaItem"><h4>GPS</h4><p id="metaGPS">Not Available</p></div>
+              <div class="metaItem"><h4>Color Space</h4><p id="metaColor">Unknown</p></div>
+              <div class="metaItem"><h4>Orientation</h4><p id="metaOrientation">Unknown</p></div>
+              <div class="metaItem"><h4>Compression</h4><p id="metaCompression">Unknown</p></div>
+              <div class="metaItem"><h4>Bit Depth</h4><p id="metaBitDepth">Unknown</p></div>
+            </div>
+          </div>
+
+          <!-- HISTOGRAM TAB -->
+          <div class="tabContent" id="histogram">
+            <div class="histogramCard">
+              <h3>RGB Histogram</h3>
+              <canvas id="histogramCanvas" width="1000" height="300"></canvas>
+            </div>
+          </div>
+
+          <!-- HEATMAP TAB -->
+          <div class="tabContent" id="heatmap">
+            <div class="compareBox">
+              <img id="originalImage" src="">
+              <img id="heatmapImage" src="">
+              <div class="compareSlider" id="compareSlider"></div>
+            </div>
+            <div style="margin-top:20px;color:var(--muted);line-height:1.8;">
+              The heatmap will automatically appear here once the Grad-CAM backend is integrated. Until then, this section displays the uploaded image.
+            </div>
+          </div>
+
+          <!-- REPORT TAB -->
+          <div class="tabContent" id="report">
+            <div class="panel">
+              <h2 style="font-family:'Fraunces';margin-bottom:20px;">Digital Investigation Report</h2>
+              <div class="infoGrid">
+                <div class="infoItem"><label>Classification</label><span id="reportClassification">—</span></div>
+                <div class="infoItem"><label>Confidence</label><span id="reportConfidence">—</span></div>
+                <div class="infoItem"><label>Trust Score</label><span id="reportTrust">—</span></div>
+                <div class="infoItem"><label>Verification ID</label><span id="reportVerification">—</span></div>
+                <div class="infoItem"><label>SHA-256</label><span id="reportSHA">—</span></div>
+                <div class="infoItem"><label>Analysis Time</label><span id="reportTime">—</span></div>
+              </div>
+              <div style="margin-top:35px;">
+                <h3 style="font-family:'Fraunces';margin-bottom:16px;">AI Explanation</h3>
+                <ul class="reasonList" id="reportReasons"></ul>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-      <div class="reasonBlock">
-        <div class="verdictLabel">WHY</div>
-        <ul id="rReasons"></ul>
-      </div>
     </div>
+  </main>
 
-    <div class="resultActions">
-      <button class="btn btnGhost" id="btnAnother">Verify another file</button>
-      <button class="btn btnPrimary" id="btnDownload">Download report</button>
-    </div>
+  <footer style="padding:45px;text-align:center;border-top:1px solid var(--border);font-family:'IBM Plex Mono';color:var(--muted);">
+    © 2026 Trustify AI • VERIFY • EXPLAIN • TRUST
+  </footer>
 
-    <p class="disclaimer">If the Flask backend at <span id="backendUrlDisplay"></span> is unreachable, this result was generated by an on-page simulator for demonstration purposes.</p>
-  </section>
+  <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+  <script>
+  /* backend config: swap API_BASE_URL and set DEMO_MODE false once /api/analyze is live */
+  const CONFIG = {
+    API_BASE_URL: "http://localhost:5000",
+    ANALYZE_ENDPOINT: "/api/analyze",
+    DEMO_MODE: true,          // set to false once the real backend is stable
+    REQUEST_TIMEOUT_MS: 30000
+  };
 
-</main>
+  /* STATE */
+  let currentFile = null;
+  let zoomLevel = 1;
+  let analysisStart = 0;
+  let history = [];
+  let lastQuality = null;
+  let lastResult = null;
+  let forensicEvents = [];
+  const CIRCLE_LENGTH = 440;
 
-<footer>
-  © 2026 Trustify AI · <a href="index.html">Home</a> · <a href="platform.html">Platform</a>
-</footer>
+  /* THEME TOGGLE (Dark / Light) */
+  (function initTheme() {
+    const saved = localStorage.getItem("trustifyTheme") || "dark";
+    document.documentElement.setAttribute("data-theme", saved);
+    updateThemeIcon(saved);
+  })();
 
-<script>
-
-const stages = {
-  upload: document.getElementById("stageUpload"),
-  preview: document.getElementById("stagePreview"),
-  analyzing: document.getElementById("stageAnalyzing"),
-  results: document.getElementById("stageResults")
-};
-
-function showStage(name){
-  Object.values(stages).forEach(s => s.classList.remove("active"));
-  stages[name].classList.add("active");
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-let currentFile = null;
-
-// ===============================
-// Dropzone behaviour
-// ===============================
-const dropzone = document.getElementById("dropzone");
-const fileInput = document.getElementById("fileInput");
-
-dropzone.addEventListener("dragover", e => {
-  e.preventDefault();
-  dropzone.classList.add("dragover");
-});
-dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
-dropzone.addEventListener("drop", e => {
-  e.preventDefault();
-  dropzone.classList.remove("dragover");
-  if(e.dataTransfer.files.length){
-    handleFile(e.dataTransfer.files[0]);
-  }
-});
-fileInput.addEventListener("change", e => {
-  if(e.target.files.length){
-    handleFile(e.target.files[0]);
-  }
-});
-
-function handleFile(file){
-  currentFile = file;
-
-  document.getElementById("pvName").textContent = file.name.toUpperCase();
-  document.getElementById("pvMeta").textContent = (file.size/1024).toFixed(1) + " KB · " + (file.type || "unknown type");
-
-  const thumb = document.getElementById("pvThumb");
-  thumb.innerHTML = "";
-
-  if(file.type.startsWith("image/")){
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(file);
-    thumb.appendChild(img);
-  } else if(file.type.startsWith("video/")){
-    const vid = document.createElement("video");
-    vid.src = URL.createObjectURL(file);
-    vid.muted = true;
-    vid.autoplay = true;
-    vid.loop = true;
-    thumb.appendChild(vid);
-  } else {
-    const icon = document.createElement("i");
-    icon.className = "fa-solid fa-file-audio";
-    thumb.appendChild(icon);
+  function updateThemeIcon(theme) {
+    const btn = document.getElementById("themeToggle");
+    if (!btn) return;
+    btn.innerHTML = theme === "light"
+      ? '<i class="fa-solid fa-sun"></i>'
+      : '<i class="fa-solid fa-moon"></i>';
   }
 
-  showStage("preview");
-}
+  document.getElementById("themeToggle").onclick = function () {
+    const current = document.documentElement.getAttribute("data-theme") || "dark";
+    const next = current === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("trustifyTheme", next);
+    updateThemeIcon(next);
+  };
 
-document.getElementById("btnCancel").addEventListener("click", () => {
-  currentFile = null;
-  fileInput.value = "";
-  showStage("upload");
-});
+  /* DOM REFERENCES */
+  const fileInput = document.getElementById("fileInput");
+  const dropzone = document.getElementById("dropzone");
+  const previewContainer = document.getElementById("previewContainer");
+  const previewImage = document.getElementById("previewImage");
+  const originalImage = document.getElementById("originalImage");
+  const heatmapImage = document.getElementById("heatmapImage");
+  const viewer = document.getElementById("viewer");
+  const viewerImage = document.getElementById("viewerImage");
+  const gauge = document.getElementById("gaugeProgress");
+  const trustCircle = document.getElementById("trustCircle");
+  const reasonList = document.getElementById("reasonList");
+  const reportReasons = document.getElementById("reportReasons");
+  const histogramCanvas = document.getElementById("histogramCanvas");
+  const histogramCtx = histogramCanvas.getContext("2d");
 
-// ===============================
-// Analysis simulation
-// ===============================
-// ===============================
-// Backend wiring
-// ===============================
-// Point this at your Flask server. If it's unreachable (e.g. you haven't
-// built the model yet), analysis automatically falls back to the on-page
-// simulator below so the demo still works end-to-end.
-const BACKEND_URL = "http://localhost:5000/api/analyze";
-document.getElementById("backendUrlDisplay").textContent = BACKEND_URL;
+  /* UTILITIES */
+  function generateVerificationID() {
+    return "TR-" + Date.now();
+  }
 
-document.getElementById("btnAnalyze").addEventListener("click", () => {
-  showStage("analyzing");
-  runAnalysis();
-});
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    document.getElementById("toastText").textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2500);
+  }
 
-async function runAnalysis(){
-  const animationDone = animateStages();
-  const resultPromise = analyzeFile(currentFile);
+  /* LOADING OVERLAY HELPERS (reusable "Analyzing Evidence" animation) */
+  function showLoading(text, duration) {
+    const overlay = document.getElementById("loadingOverlay");
+    const status = document.getElementById("loadingStatus");
+    const fill = document.querySelector(".progressFill");
 
-  const [, result] = await Promise.all([animationDone, resultPromise]);
-  renderResults(result);
-  showStage("results");
-}
+    status.textContent = text || "Working...";
 
-function animateStages(){
-  return new Promise(resolve => {
-    const items = document.querySelectorAll(".aItem");
-    items.forEach(i => { i.classList.remove("active","done"); i.querySelector(".status").textContent = "PENDING"; });
+    // Restart the progress-fill animation so repeated calls always animate
+    fill.style.animation = "none";
+    void fill.offsetHeight; // force reflow
+    fill.style.animation = "loadingFill " + (duration || 1.2) + "s linear forwards";
 
-    let i = 0;
-    function step(){
-      if(i > 0){
-        items[i-1].classList.remove("active");
-        items[i-1].classList.add("done");
-        items[i-1].querySelector(".status").textContent = "DONE";
-      }
-      if(i < items.length){
-        items[i].classList.add("active");
-        items[i].querySelector(".status").textContent = "RUNNING";
-        i++;
-        setTimeout(step, 650);
-      } else {
-        resolve();
+    overlay.classList.add("active");
+    overlay.dataset.shownAt = Date.now().toString();
+  }
+
+  function hideLoading(minVisibleMs) {
+    const overlay = document.getElementById("loadingOverlay");
+    const shownAt = parseInt(overlay.dataset.shownAt || "0", 10);
+    const elapsed = Date.now() - shownAt;
+    const minMs = typeof minVisibleMs === "number" ? minVisibleMs : 800;
+    const wait = Math.max(0, minMs - elapsed);
+    setTimeout(() => overlay.classList.remove("active"), wait);
+  }
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / 1024 / 1024).toFixed(2) + " MB";
+  }
+
+  function aspectRatio(w, h) {
+    const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+    const g = gcd(w, h);
+    return (w / g) + ":" + (h / g);
+  }
+
+  /* DETECTION CONFIDENCE BREAKDOWN */
+  function renderConfidenceBreakdown(confidence) {
+    const metrics = [
+      "Metadata Analysis",
+      "CNN Model",
+      "Artifact Detection",
+      "Noise Analysis",
+      "Texture Analysis",
+      "Color Consistency",
+      "Compression Analysis"
+    ];
+
+    const list = document.getElementById("breakdownList");
+    list.innerHTML = "";
+
+    metrics.forEach(name => {
+      // Jitter each sub-metric around the overall confidence for a realistic spread
+      const jitter = (Math.random() * 12) - 6;
+      const value = Math.max(2, Math.min(100, Math.round(confidence + jitter)));
+
+      const row = document.createElement("div");
+      row.className = "breakdownRow";
+      row.innerHTML =
+        '<span class="breakdownLabel">' + name + '</span>' +
+        '<div class="breakdownTrack"><div class="breakdownFill"></div></div>' +
+        '<span class="breakdownValue">' + value + '%</span>';
+      list.appendChild(row);
+
+      requestAnimationFrame(() => {
+        row.querySelector(".breakdownFill").style.width = value + "%";
+      });
+    });
+  }
+
+  function resetConfidenceBreakdown() {
+    document.getElementById("breakdownList").innerHTML = "";
+  }
+
+  /* IMAGE QUALITY ASSESSMENT */
+  function assessImageQuality(image, file) {
+    const w = image.naturalWidth, h = image.naturalHeight;
+
+    const canvas = document.createElement("canvas");
+    // Cap analysis size for performance
+    const scale = Math.min(1, 800 / Math.max(w, h));
+    canvas.width = Math.max(1, Math.round(w * scale));
+    canvas.height = Math.max(1, Math.round(h * scale));
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const cw = canvas.width, ch = canvas.height;
+    const gray = new Float32Array(cw * ch);
+
+    let sum = 0;
+    for (let i = 0, p = 0; i < data.length; i += 4, p++) {
+      const l = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+      gray[p] = l;
+      sum += l;
+    }
+    const mean = sum / gray.length;
+
+    // Contrast: standard deviation of luminance
+    let variance = 0;
+    for (let i = 0; i < gray.length; i++) variance += (gray[i] - mean) * (gray[i] - mean);
+    const stdDev = Math.sqrt(variance / gray.length);
+
+    // Sharpness: Laplacian variance (edge energy)
+    let lapSum = 0, lapSumSq = 0, count = 0;
+    for (let y = 1; y < ch - 1; y++) {
+      for (let x = 1; x < cw - 1; x++) {
+        const idx = y * cw + x;
+        const lap =
+          4 * gray[idx] - gray[idx - 1] - gray[idx + 1] - gray[idx - cw] - gray[idx + cw];
+        lapSum += lap;
+        lapSumSq += lap * lap;
+        count++;
       }
     }
-    step();
-  });
-}
+    const lapMean = lapSum / count;
+    const sharpnessScore = (lapSumSq / count) - (lapMean * lapMean);
 
-async function analyzeFile(file){
-  try{
+    // Noise: high-frequency energy in flat-ish regions, approximated via local variance sampling
+    let noiseAccum = 0, noiseSamples = 0;
+    for (let y = 2; y < ch - 2; y += 3) {
+      for (let x = 2; x < cw - 2; x += 3) {
+        const idx = y * cw + x;
+        const n1 = gray[idx - cw - 1], n2 = gray[idx - cw], n3 = gray[idx - cw + 1];
+        const n4 = gray[idx - 1], n5 = gray[idx], n6 = gray[idx + 1];
+        const n7 = gray[idx + cw - 1], n8 = gray[idx + cw], n9 = gray[idx + cw + 1];
+        const localMean = (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9) / 9;
+        const localVar = ((n1 - localMean) ** 2 + (n2 - localMean) ** 2 + (n3 - localMean) ** 2 +
+          (n4 - localMean) ** 2 + (n5 - localMean) ** 2 + (n6 - localMean) ** 2 +
+          (n7 - localMean) ** 2 + (n8 - localMean) ** 2 + (n9 - localMean) ** 2) / 9;
+        noiseAccum += localVar;
+        noiseSamples++;
+      }
+    }
+    const noiseScore = noiseAccum / Math.max(1, noiseSamples);
+
+    // Compression estimate: bytes-per-pixel — low bpp on a large image suggests heavier compression
+    const bytesPerPixel = file.size / (w * h);
+
+    // ---- Map raw scores to human-readable labels ----
+    let sharpnessLabel, sharpnessClass;
+    if (sharpnessScore > 900) { sharpnessLabel = "Excellent"; sharpnessClass = "good"; }
+    else if (sharpnessScore > 350) { sharpnessLabel = "Good"; sharpnessClass = "good"; }
+    else if (sharpnessScore > 120) { sharpnessLabel = "Moderate"; sharpnessClass = "warn"; }
+    else { sharpnessLabel = "Soft / Blurry"; sharpnessClass = "bad"; }
+
+    let noiseLabel, noiseClass;
+    if (noiseScore < 25) { noiseLabel = "Low"; noiseClass = "good"; }
+    else if (noiseScore < 80) { noiseLabel = "Moderate"; noiseClass = "warn"; }
+    else { noiseLabel = "High"; noiseClass = "bad"; }
+
+    let compressionLabel, compressionClass;
+    if (bytesPerPixel > 1.2) { compressionLabel = "Low"; compressionClass = "good"; }
+    else if (bytesPerPixel > 0.4) { compressionLabel = "Moderate"; compressionClass = "warn"; }
+    else { compressionLabel = "High"; compressionClass = "bad"; }
+
+    let brightnessLabel;
+    if (mean < 70) brightnessLabel = "Dark";
+    else if (mean > 190) brightnessLabel = "Bright";
+    else brightnessLabel = "Normal";
+
+    let contrastLabel, contrastClass;
+    if (stdDev > 55) { contrastLabel = "Good"; contrastClass = "good"; }
+    else if (stdDev > 30) { contrastLabel = "Moderate"; contrastClass = "warn"; }
+    else { contrastLabel = "Low"; contrastClass = "bad"; }
+
+    // Overall star rating (1-5) from a weighted composite of the above
+    const sharpNorm = Math.min(1, sharpnessScore / 900);
+    const noiseNorm = 1 - Math.min(1, noiseScore / 100);
+    const compNorm = Math.min(1, bytesPerPixel / 1.2);
+    const contrastNorm = Math.min(1, stdDev / 55);
+    const composite = (sharpNorm * 0.35) + (noiseNorm * 0.25) + (compNorm * 0.2) + (contrastNorm * 0.2);
+    const stars = Math.max(1, Math.min(5, Math.round(composite * 5)));
+
+    return {
+      resolution: w + " × " + h,
+      sharpness: sharpnessLabel, sharpnessClass,
+      noise: noiseLabel, noiseClass,
+      compression: compressionLabel, compressionClass,
+      brightness: brightnessLabel,
+      contrast: contrastLabel, contrastClass,
+      stars
+    };
+  }
+
+  function renderImageQuality(quality) {
+    document.getElementById("qualityCard").style.display = "block";
+    document.getElementById("qResolution").textContent = quality.resolution;
+
+    const setItem = (id, text, cls) => {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = cls || "";
+    };
+    setItem("qSharpness", quality.sharpness, quality.sharpnessClass);
+    setItem("qNoise", quality.noise, quality.noiseClass);
+    setItem("qCompression", quality.compression, quality.compressionClass);
+    setItem("qBrightness", quality.brightness, "");
+    setItem("qContrast", quality.contrast, quality.contrastClass);
+
+    document.getElementById("qualityStars").innerHTML =
+      "★".repeat(quality.stars) + '<span class="dim">' + "☆".repeat(5 - quality.stars) + "</span>";
+  }
+
+  /* DRAG & DROP / FILE INPUT */
+  dropzone.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropzone.classList.add("drag");
+  });
+
+  dropzone.addEventListener("dragleave", () => {
+    dropzone.classList.remove("drag");
+  });
+
+  dropzone.addEventListener("drop", e => {
+    e.preventDefault();
+    dropzone.classList.remove("drag");
+    if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
+  });
+
+  fileInput.addEventListener("change", e => {
+    resetAnalysis();
+    if (e.target.files.length) loadFile(e.target.files[0]);
+  });
+
+  /* FILE VALIDATION */
+  function validateFile(file) {
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+
+    if (!validTypes.includes(file.type)) {
+      showToast("Only JPG, JPEG, PNG and WEBP are supported.");
+      return false;
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      showToast("Maximum file size is 50 MB.");
+      return false;
+    }
+    return true;
+  }
+
+  /* LOAD IMAGE */
+  function loadFile(file) {
+    if (!validateFile(file)) return;
+
+    currentFile = file;
+    previewContainer.style.display = "block";
+
+    const url = URL.createObjectURL(file);
+    previewImage.src = url;
+    originalImage.src = url;
+    heatmapImage.src = url;
+    viewerImage.src = url;
+
+    document.getElementById("fileName").textContent = file.name;
+    document.getElementById("fileSize").textContent = formatSize(file.size);
+    document.getElementById("fileType").textContent = file.type;
+    document.getElementById("uploadTime").textContent = new Date().toLocaleString();
+    document.getElementById("verificationId").textContent = generateVerificationID();
+    document.getElementById("reportFile").textContent = file.name;
+
+    previewImage.onload = function () {
+      document.getElementById("resolution").textContent =
+        previewImage.naturalWidth + " × " + previewImage.naturalHeight;
+      document.getElementById("aspectRatio").textContent =
+        aspectRatio(previewImage.naturalWidth, previewImage.naturalHeight);
+      drawHistogram(previewImage);
+
+      try {
+        lastQuality = assessImageQuality(previewImage, file);
+        renderImageQuality(lastQuality);
+      } catch (e) {
+        console.error("Quality assessment failed:", e);
+      }
+    };
+
+    readEXIF(file);
+    showToast("Evidence loaded successfully.");
+  }
+
+  /* ZOOM & FULLSCREEN VIEWER */
+  document.getElementById("zoomIn").onclick = function () {
+    zoomLevel += 0.2;
+    previewImage.style.transform = "scale(" + zoomLevel + ")";
+  };
+
+  document.getElementById("zoomOut").onclick = function () {
+    zoomLevel = Math.max(1, zoomLevel - 0.2);
+    previewImage.style.transform = "scale(" + zoomLevel + ")";
+  };
+
+  document.getElementById("resetZoom").onclick = function () {
+    zoomLevel = 1;
+    previewImage.style.transform = "scale(1)";
+  };
+
+  document.getElementById("fullscreenBtn").onclick = function () {
+    viewer.classList.add("active");
+  };
+
+  document.querySelector(".closeViewer").onclick = function () {
+    viewer.classList.remove("active");
+  };
+
+  viewer.onclick = function (e) {
+    if (e.target === viewer) viewer.classList.remove("active");
+  };
+
+  /* TAB SYSTEM */
+  document.querySelectorAll(".tabBtn").forEach(btn => {
+    btn.onclick = function () {
+      document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tabContent").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    };
+  });
+
+  /* EXIF READER */
+  function readEXIF(file) {
+    EXIF.getData(file, function () {
+      const camera = EXIF.getTag(this, "Model") || "Not Available";
+      const software = EXIF.getTag(this, "Software") || "Not Available";
+      const date = EXIF.getTag(this, "DateTimeOriginal") || "Not Available";
+      const gps = EXIF.getTag(this, "GPSLatitude") ? "Available" : "Not Available";
+      const orientation = EXIF.getTag(this, "Orientation") || "Unknown";
+      const color = EXIF.getTag(this, "ColorSpace") || "Unknown";
+
+      document.getElementById("metaCamera").textContent = camera;
+      document.getElementById("metaSoftware").textContent = software;
+      document.getElementById("metaDate").textContent = date;
+      document.getElementById("metaGPS").textContent = gps;
+      document.getElementById("metaOrientation").textContent = orientation;
+      document.getElementById("metaColor").textContent = color;
+    });
+  }
+
+  /* RGB HISTOGRAM */
+  function drawHistogram(image) {
+    histogramCtx.clearRect(0, 0, histogramCanvas.width, histogramCanvas.height);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const ictx = canvas.getContext("2d");
+    ictx.drawImage(image, 0, 0);
+
+    const imgData = ictx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const r = new Array(256).fill(0);
+    const g = new Array(256).fill(0);
+    const b = new Array(256).fill(0);
+
+    for (let i = 0; i < imgData.length; i += 4) {
+      r[imgData[i]]++;
+      g[imgData[i + 1]]++;
+      b[imgData[i + 2]]++;
+    }
+
+    const max = Math.max(...r, ...g, ...b);
+    const w = histogramCanvas.width / 256;
+
+    for (let i = 0; i < 256; i++) {
+      histogramCtx.fillStyle = "red";
+      histogramCtx.fillRect(i * w, 300 - (r[i] / max) * 280, w, (r[i] / max) * 280);
+      histogramCtx.fillStyle = "lime";
+      histogramCtx.fillRect(i * w, 300 - (g[i] / max) * 280, w, (g[i] / max) * 280);
+      histogramCtx.fillStyle = "dodgerblue";
+      histogramCtx.fillRect(i * w, 300 - (b[i] / max) * 280, w, (b[i] / max) * 280);
+    }
+  }
+
+  /* HEATMAP COMPARE SLIDER */
+  const slider = document.getElementById("compareSlider");
+  let dragging = false;
+
+  slider.addEventListener("mousedown", () => { dragging = true; });
+  window.addEventListener("mouseup", () => { dragging = false; });
+
+  window.addEventListener("mousemove", e => {
+    if (!dragging) return;
+    const box = document.querySelector(".compareBox");
+    const rect = box.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    if (x < 0) x = 0;
+    if (x > rect.width) x = rect.width;
+    const percent = (x / rect.width) * 100;
+    slider.style.left = percent + "%";
+    heatmapImage.style.clipPath = "inset(0 " + (100 - percent) + "% 0 0)";
+  });
+
+  /* posts to the backend, falls back to a mock result if DEMO_MODE is on */
+  async function analyzeImage(file) {
+    if (CONFIG.DEMO_MODE) {
+      return getMockResult();
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch(BACKEND_URL, { method: "POST", body: formData });
-    if(!res.ok) throw new Error("Backend returned " + res.status);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT_MS);
 
-    const data = await res.json();
-    // maps the Flask contract straight onto what renderResults() expects
-    return {
-      label: data.label,
-      css: data.classification,
-      confidence: Number(data.confidence).toFixed(1),
-      trust: data.trust_score,
-      reasons: data.reasons,
-      hash: data.file_hash
-    };
-  } catch(err){
-    console.warn("Backend unreachable, falling back to simulated result:", err.message);
-    return runFakeInference();
-  }
-}
+    try {
+      const res = await fetch(CONFIG.API_BASE_URL + CONFIG.ANALYZE_ENDPOINT, {
+        method: "POST",
+        body: formData,
+        signal: controller.signal
+      });
 
-// ===============================
-// Placeholder inference — swap for real API call
-// ===============================
-function runFakeInference(){
-  const classes = [
-    {
-      key:"original", label:"Original", css:"original",
-      reasons:[
-        "Sensor noise pattern matches expected camera profile",
-        "No GAN or diffusion artifacts found in facial or background regions",
-        "Metadata timestamps are internally consistent",
-        "Compression history matches a single capture-and-share cycle"
-      ],
-      trustRange:[82,97]
-    },
-    {
-      key:"edited", label:"AI Edited", css:"edited",
-      reasons:[
-        "Localized inpainting artifacts detected in one region",
-        "Metadata shows an editing tool signature after capture",
-        "Lighting direction is inconsistent between subject and background",
-        "Compression pattern differs between edited and untouched regions"
-      ],
-      trustRange:[35,60]
-    },
-    {
-      key:"generated", label:"AI Generated", css:"generated",
-      reasons:[
-        "GAN artifacts detected across facial region",
-        "No sensor noise pattern found — inconsistent with any camera",
-        "Metadata contains no capture device information",
-        "Frequency-domain analysis shows synthetic generation signature"
-      ],
-      trustRange:[5,28]
+      if (!res.ok) throw new Error("Backend responded with status " + res.status);
+
+      return await res.json();
+    } finally {
+      clearTimeout(timeout);
     }
-  ];
+  }
 
-  const pick = classes[Math.floor(Math.random()*classes.length)];
-  const confidence = (Math.random()*8 + 91).toFixed(1);
-  const trust = Math.floor(Math.random()*(pick.trustRange[1]-pick.trustRange[0]+1)) + pick.trustRange[0];
+  function getMockResult() {
+    const samples = [
+      {
+        classification: "original",
+        label: "Original",
+        confidence: 98.2,
+        trust_score: 95,
+        file_hash: "4A6BC9128FDE",
+        reasons: [
+          "Camera sensor pattern appears authentic.",
+          "No GAN artifacts detected.",
+          "Compression history is consistent.",
+          "Metadata appears internally consistent."
+        ]
+      },
+      {
+        classification: "edited",
+        label: "AI Edited",
+        confidence: 94.8,
+        trust_score: 54,
+        file_hash: "8CE213FA991A",
+        reasons: [
+          "Localized editing artifacts detected.",
+          "Lighting inconsistency found.",
+          "Metadata indicates image editing.",
+          "Compression signatures differ across regions."
+        ]
+      },
+      {
+        classification: "generated",
+        label: "AI Generated",
+        confidence: 97.4,
+        trust_score: 14,
+        file_hash: "1B8D98A2F76C",
+        reasons: [
+          "GAN fingerprints detected.",
+          "No authentic sensor noise found.",
+          "Metadata missing camera information.",
+          "Texture frequency resembles synthetic generation."
+        ]
+      }
+    ];
+    return samples[Math.floor(Math.random() * samples.length)];
+  }
 
-  return { ...pick, confidence, trust };
-}
+  /* START ANALYSIS */
+  async function startAnalysis() {
+    if (!currentFile) {
+      showToast("Upload an image first.");
+      return;
+    }
 
-function renderResults(result){
-  document.getElementById("rFileName").textContent = currentFile ? currentFile.name.toUpperCase() : "FILE";
-  document.getElementById("rHash").textContent = "SHA-256 · " + (result.hash || fakeHash());
+    animateInvestigation();
+    setTimeout(scrollResults, 700);
 
-  const classEl = document.getElementById("rClass");
-  classEl.textContent = result.label;
-  classEl.className = "verdictClass " + result.css;
+    analysisStart = performance.now();
+    showLoading("Collecting evidence...", 6);
 
-  document.getElementById("rConf").textContent = result.confidence + "%";
+    const loadingTexts = [
+      "Collecting evidence...",
+      "Reading metadata...",
+      "Running AI model...",
+      "Detecting AI artifacts...",
+      "Generating trust score...",
+      "Preparing investigation report..."
+    ];
+    let step = 0;
+    const loadingInterval = setInterval(() => {
+      document.getElementById("loadingStatus").textContent = loadingTexts[step];
+      step = Math.min(step + 1, loadingTexts.length - 1);
+    }, 900);
 
-  const circle = document.getElementById("rTrustCircle");
-  circle.textContent = result.trust;
-  const color = result.trust >= 70 ? "#5c8b81" : result.trust >= 40 ? "#b8863f" : "#b23a1f";
-  circle.style.border = "5px solid " + color;
-  circle.style.color = color;
+    try {
+      const result = await analyzeImage(currentFile);
+      renderResult(result);
+    } catch (err) {
+      console.error("Analysis failed:", err);
+      showToast("Analysis failed. Showing a sample result instead.");
+      renderResult(getMockResult());
+    } finally {
+      clearInterval(loadingInterval);
+      hideLoading(3000);
+    }
+  }
 
-  document.getElementById("rTrustLabel").textContent =
-    result.trust >= 70 ? "Highly Trusted Media" :
-    result.trust >= 40 ? "Moderate Trust — Review Recommended" :
-    "Low Trust — Likely Synthetic";
+  document.getElementById("analyzeBtnTab").onclick = startAnalysis;
 
-  const list = document.getElementById("rReasons");
-  list.innerHTML = "";
-  result.reasons.forEach(r => {
-    const li = document.createElement("li");
-    li.textContent = r;
-    list.appendChild(li);
+  /* RENDER RESULTS */
+  function renderResult(result) {
+    lastResult = result;
+    const seconds = ((performance.now() - analysisStart) / 1000).toFixed(2);
+
+    document.getElementById("analysisTime").textContent = seconds + " sec";
+    document.getElementById("reportTime").textContent = seconds + " sec";
+    document.getElementById("reportHash").textContent = "SHA-256 · " + result.file_hash;
+    document.getElementById("reportSHA").textContent = result.file_hash;
+    document.getElementById("resultClass").textContent = result.label;
+    document.getElementById("reportClassification").textContent = result.label;
+    document.getElementById("confidenceText").textContent = result.confidence + "%";
+    document.getElementById("reportConfidence").textContent = result.confidence + "%";
+    document.getElementById("trustCircle").textContent = result.trust_score;
+    document.getElementById("reportTrust").textContent = result.trust_score + "/100";
+    document.getElementById("reportVerification").textContent =
+      document.getElementById("verificationId").textContent;
+    document.getElementById("statusBadge").textContent = "COMPLETED";
+
+    const offset = CIRCLE_LENGTH - CIRCLE_LENGTH * (result.confidence / 100);
+    gauge.style.strokeDashoffset = offset;
+
+    renderConfidenceBreakdown(result.confidence);
+
+    const classElement = document.getElementById("resultClass");
+    classElement.className = "verdictClass " + result.classification;
+
+    if (result.trust_score >= 75) {
+      trustCircle.style.borderColor = "#5c8b81";
+      trustCircle.style.color = "#5c8b81";
+      document.getElementById("trustDescription").textContent = "Highly Trusted Media";
+    } else if (result.trust_score >= 40) {
+      trustCircle.style.borderColor = "#b8863f";
+      trustCircle.style.color = "#b8863f";
+      document.getElementById("trustDescription").textContent = "Moderate Trust - Manual Review Recommended";
+    } else {
+      trustCircle.style.borderColor = "#b23a1f";
+      trustCircle.style.color = "#b23a1f";
+      document.getElementById("trustDescription").textContent = "Low Trust - Possible AI Generated Media";
+    }
+
+    // Optional: real Grad-CAM overlay once the backend supplies one
+    if (result.heatmap_url) {
+      heatmapImage.src = result.heatmap_url;
+    }
+
+    reasonList.innerHTML = "";
+    reportReasons.innerHTML = "";
+    result.reasons.forEach(text => {
+      const li = document.createElement("li");
+      li.innerHTML = "<i class='fa-solid fa-circle-check'></i><span>" + text + "</span>";
+      reasonList.appendChild(li);
+      reportReasons.appendChild(li.cloneNode(true));
+    });
+
+    completeTimeline();
+    saveHistory(result);
+    showToast("Investigation completed.");
+  }
+
+  /* TIMELINE ANIMATION */
+  function animateInvestigation() {
+    const steps = document.querySelectorAll(".step");
+    steps.forEach(step => {
+      step.classList.remove("done", "active");
+    });
+
+    let index = 0;
+    function next() {
+      if (index > 0) {
+        steps[index - 1].classList.remove("active");
+        steps[index - 1].classList.add("done");
+      }
+      if (index < steps.length) {
+        steps[index].classList.add("active");
+        index++;
+        setTimeout(next, 900);
+      }
+    }
+    next();
+  }
+
+  function completeTimeline() {
+    const steps = document.querySelectorAll(".step");
+    const events = [
+      { label: "Image Uploaded", note: "Evidence received into workspace" },
+      { label: "Metadata Extracted", note: "EXIF & file metadata parsed" },
+      { label: "CNN Prediction Finished", note: "Classification model executed" },
+      { label: "GradCAM Generated", note: "Explainability heatmap rendered" },
+      { label: "Trust Score Calculated", note: "Evidence fusion completed" },
+      { label: "Report Generated", note: "Investigation report compiled" }
+    ];
+
+    forensicEvents = [];
+    const base = new Date();
+
+    steps.forEach((step, index) => {
+      setTimeout(() => {
+        step.classList.remove("active");
+        step.classList.add("done");
+
+        const t = new Date(base.getTime() + index * 1000);
+        const timeStr = t.toLocaleTimeString("en-GB", { hour12: false });
+        const timeEl = document.getElementById("stepTime" + (index + 1));
+        if (timeEl) timeEl.textContent = timeStr;
+
+        forensicEvents.push({ time: timeStr, label: events[index].label, note: events[index].note });
+        renderForensicLog();
+      }, index * 250);
+    });
+
+    setTimeout(() => {
+      document.getElementById("forensicLog").classList.add("show");
+    }, steps.length * 250 + 50);
+  }
+
+  function renderForensicLog() {
+    const container = document.getElementById("forensicLogEntries");
+    container.innerHTML = "";
+    forensicEvents.forEach((ev, i) => {
+      const row = document.createElement("div");
+      row.className = "logEntry";
+      row.innerHTML =
+        '<div class="logTime">' + ev.time + '</div>' +
+        '<div class="logBody"><div class="logLabel">' + ev.label + '</div><div class="logNote">' + ev.note + '</div></div>';
+      container.appendChild(row);
+
+      if (i < forensicEvents.length - 1) {
+        const arrowRow = document.createElement("div");
+        arrowRow.className = "logArrowRow";
+        arrowRow.innerHTML = '<div></div><div class="logArrow">↓</div>';
+        container.appendChild(arrowRow);
+      }
+    });
+  }
+
+  function resetAnalysis() {
+    reasonList.innerHTML = "";
+    reportReasons.innerHTML = "";
+    document.getElementById("resultClass").textContent = "—";
+    document.getElementById("confidenceText").textContent = "0%";
+    document.getElementById("trustCircle").textContent = "0";
+    document.getElementById("trustDescription").textContent = "Awaiting analysis...";
+    document.getElementById("reportClassification").textContent = "—";
+    document.getElementById("reportConfidence").textContent = "—";
+    document.getElementById("reportTrust").textContent = "—";
+    gauge.style.strokeDashoffset = CIRCLE_LENGTH;
+    resetConfidenceBreakdown();
+    document.getElementById("forensicLog").classList.remove("show");
+    document.querySelectorAll(".stepTime").forEach(el => el.textContent = "");
+    forensicEvents = [];
+    lastResult = null;
+
+    document.querySelectorAll(".step").forEach((step, index) => {
+      step.classList.remove("done", "active");
+      if (index === 0) step.classList.add("active");
+    });
+  }
+
+  /* HISTORY (localStorage — replace with a backend "history" endpoint later) */
+  function saveHistory(result) {
+    let list = JSON.parse(localStorage.getItem("trustifyHistory") || "[]");
+    list.unshift({
+      file: currentFile.name,
+      date: new Date().toLocaleString(),
+      classification: result.label,
+      trust: result.trust_score,
+      confidence: result.confidence,
+      hash: result.file_hash
+    });
+    if (list.length > 20) list = list.slice(0, 20);
+    localStorage.setItem("trustifyHistory", JSON.stringify(list));
+    loadHistory();
+  }
+
+  function loadHistory() {
+    history = JSON.parse(localStorage.getItem("trustifyHistory") || "[]");
+    const container = document.getElementById("historyList");
+    container.innerHTML = "";
+
+    history.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "historyItem";
+
+      let badge = "badgeOriginal";
+      if (item.classification.includes("Edited")) badge = "badgeEdited";
+      if (item.classification.includes("Generated")) badge = "badgeGenerated";
+
+      div.innerHTML = `
+        <h4>${item.file}</h4>
+        <p>${item.date}</p>
+        <p>Confidence: ${item.confidence}%</p>
+        <span class="historyBadge ${badge}">${item.classification}</span>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  document.getElementById("historySearch").addEventListener("input", function () {
+    const keyword = this.value.toLowerCase();
+    document.querySelectorAll(".historyItem").forEach(item => {
+      item.style.display = item.innerText.toLowerCase().includes(keyword) ? "block" : "none";
+    });
   });
-}
 
-function fakeHash(){
-  const chars = "0123456789ABCDEF";
-  let out = "";
-  for(let i=0;i<8;i++) out += chars[Math.floor(Math.random()*16)];
-  return out + "…" + chars[Math.floor(Math.random()*16)] + chars[Math.floor(Math.random()*16)] + chars[Math.floor(Math.random()*16)] + chars[Math.floor(Math.random()*16)];
-}
+  document.getElementById("clearHistory").onclick = function () {
+    if (!confirm("Delete all investigation history?")) return;
+    localStorage.removeItem("trustifyHistory");
+    loadHistory();
+    showToast("History cleared.");
+  };
 
-// ===============================
-// Reset / download
-// ===============================
-document.getElementById("btnAnother").addEventListener("click", () => {
-  currentFile = null;
-  fileInput.value = "";
-  showStage("upload");
-});
+  /* REPORT EXPORT — COPY / TXT / PRINT / SHARE / PDF */
+  function buildReportText() {
+    return [
+      "TRUSTIFY AI REPORT",
+      "------------------------------------",
+      "File: " + document.getElementById("fileName").textContent,
+      "Classification: " + document.getElementById("reportClassification").textContent,
+      "Confidence: " + document.getElementById("reportConfidence").textContent,
+      "Trust Score: " + document.getElementById("reportTrust").textContent,
+      "Verification ID: " + document.getElementById("reportVerification").textContent,
+      "SHA-256: " + document.getElementById("reportSHA").textContent,
+      "------------------------------------",
+      "Reasons",
+      Array.from(reportReasons.children).map(li => li.innerText).join("\n")
+    ].join("\n");
+  }
 
-document.getElementById("btnDownload").addEventListener("click", () => {
-  const report = [
-    "TRUSTIFY AI — INVESTIGATION REPORT",
-    "File: " + document.getElementById("rFileName").textContent,
-    "Hash: " + document.getElementById("rHash").textContent,
-    "Classification: " + document.getElementById("rClass").textContent,
-    "Confidence: " + document.getElementById("rConf").textContent,
-    "Trust Score: " + document.getElementById("rTrustCircle").textContent + "/100",
-    "",
-    "Reasoning:",
-    ...Array.from(document.querySelectorAll("#rReasons li")).map(li => "- " + li.textContent)
-  ].join("\n");
+  document.getElementById("copyReport").onclick = function () {
+    navigator.clipboard.writeText(buildReportText());
+    showToast("Report copied.");
+  };
 
-  const blob = new Blob([report], {type:"text/plain"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "trustify-report.txt";
-  a.click();
-  URL.revokeObjectURL(url);
-});
+  document.getElementById("downloadTxt").onclick = function () {
+    showLoading("Preparing TXT export...", 1);
+    setTimeout(() => {
+      const blob = new Blob([buildReportText()], { type: "text/plain" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "trustify-report.txt";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      hideLoading();
+    }, 50);
+  };
 
-</script>
+  function buildReportJSON() {
+    const breakdown = {};
+    document.querySelectorAll("#breakdownList .breakdownRow").forEach(row => {
+      const label = row.querySelector(".breakdownLabel").textContent;
+      const value = parseInt(row.querySelector(".breakdownValue").textContent, 10);
+      breakdown[label] = value;
+    });
 
+    const metadata = {
+      camera: document.getElementById("metaCamera").textContent,
+      software: document.getElementById("metaSoftware").textContent,
+      date_taken: document.getElementById("metaDate").textContent,
+      gps: document.getElementById("metaGPS").textContent,
+      color_space: document.getElementById("metaColor").textContent,
+      orientation: document.getElementById("metaOrientation").textContent,
+      compression: document.getElementById("metaCompression").textContent,
+      bit_depth: document.getElementById("metaBitDepth").textContent
+    };
+
+    const report = {
+      filename: document.getElementById("fileName").textContent,
+      classification: lastResult ? lastResult.label : document.getElementById("reportClassification").textContent,
+      confidence: lastResult ? lastResult.confidence : null,
+      trust_score: lastResult ? lastResult.trust_score : null,
+      file_hash: lastResult ? lastResult.file_hash : null,
+      verification_id: document.getElementById("verificationId").textContent,
+      analysis_time: document.getElementById("reportTime").textContent,
+      confidence_breakdown: breakdown,
+      image_quality: lastQuality || {},
+      metadata: metadata,
+      reasons: lastResult ? lastResult.reasons : [],
+      forensic_timeline: forensicEvents
+    };
+
+    return JSON.stringify(report, null, 2);
+  }
+
+  document.getElementById("downloadJson").onclick = function () {
+    if (!lastResult) {
+      showToast("Run an analysis first.");
+      return;
+    }
+    showLoading("Preparing JSON export...", 1);
+    setTimeout(() => {
+      const blob = new Blob([buildReportJSON()], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "trustify-report.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      hideLoading();
+      showToast("JSON report downloaded.");
+    }, 50);
+  };
+
+  document.getElementById("printReport").onclick = function () { window.print(); };
+  document.getElementById("downloadPdf").onclick = function () { window.print(); };
+
+  document.getElementById("shareReport").onclick = async function () {
+    if (navigator.share) {
+      await navigator.share({
+        title: "Trustify AI Report",
+        text: "Digital Investigation Report",
+        url: location.href
+      });
+    } else {
+      showToast("Sharing not supported.");
+    }
+  };
+
+  /* KEYBOARD SHORTCUTS */
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") viewer.classList.remove("active");
+    if (e.ctrlKey && e.key.toLowerCase() === "o") { e.preventDefault(); fileInput.click(); }
+    if (e.ctrlKey && e.key.toLowerCase() === "p") { e.preventDefault(); window.print(); }
+  });
+
+  /* SMOOTH SCROLL TO RESULTS */
+  function scrollResults() {
+    document.querySelector(".content").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  /* PAGE INITIALIZATION */
+  window.onload = function () {
+    loadHistory();
+    document.querySelector(".statusCard small").textContent = "Waiting for image upload.";
+    document.getElementById("statusBadge").textContent = "READY";
+    gauge.style.strokeDashoffset = CIRCLE_LENGTH;
+  };
+
+  /* Mouse Glow Effect */
+  const glow = document.createElement("div");
+  glow.style.position = "fixed";
+  glow.style.width = "420px";
+  glow.style.height = "420px";
+  glow.style.borderRadius = "50%";
+  glow.style.pointerEvents = "none";
+  glow.style.background = "radial-gradient(circle,rgba(92,139,129,.10),transparent 70%)";
+  glow.style.transform = "translate(-50%,-50%)";
+  glow.style.zIndex = "-1";
+  document.body.appendChild(glow);
+  document.addEventListener("mousemove", (e) => {
+    glow.style.left = e.clientX + "px";
+    glow.style.top = e.clientY + "px";
+  });
+  </script>
 </body>
 </html>

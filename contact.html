@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact | Trustify AI</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"/>
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+
+:root{
+  --bg:#0d1210;
+  --card:#151a18;
+  --primary:#b23a1f;
+  --primary-dark:#7f2712;
+  --secondary:#5c8b81;
+  --paper:#eee8db;
+  --paper-dim:#d9d2c2;
+  --text:#e9e6dd;
+  --muted:#8b948d;
+  --border:rgba(233,230,221,.10);
+}
+
+html[data-theme="light"]{
+  --bg:#f3efe4;
+  --card:#ffffff;
+  --primary:#b23a1f;
+  --primary-dark:#7f2712;
+  --secondary:#3f6d62;
+  --paper:#fbf8f2;
+  --paper-dim:#e6ded0;
+  --text:#221f19;
+  --muted:#6a6559;
+  --border:rgba(34,31,25,.12);
+}
+
+html[data-theme="light"] body{
+  background:linear-gradient(135deg,#f3efe4,#efe9db,#f2ede1);
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(135deg,#0d1210,#0f1512,#12100d);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  background:
+    radial-gradient(circle at 15% 15%,rgba(178,58,31,.06),transparent 25%),
+    radial-gradient(circle at 85% 10%,rgba(92,139,129,.06),transparent 25%);
+}
+
+.grid-bg{
+  position:fixed;inset:0;z-index:-1;
+  background-image:radial-gradient(var(--border) 1px,transparent 1px);
+  background-size:26px 26px;
+  mask-image:radial-gradient(circle at center,black 40%,transparent 100%);
+}
+
+a{color:inherit;}
+
+/* nav */
+nav{
+  position:fixed;top:0;width:100%;z-index:1000;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 8%;
+  background:rgba(13,18,16,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:inherit;
+text-decoration:none;}
+.logo span{color:var(--primary);}
+.logo small{display:block;font-size:10px;font-family:'IBM Plex Mono';color:var(--secondary);letter-spacing:3px;margin-top:3px;font-weight:400;}
+nav ul{display:flex;list-style:none;gap:36px;}
+nav ul li a{color:#c9c4b6;text-decoration:none;font-size:14.5px;transition:.3s;}
+nav ul li a:hover,nav ul li a.active{color:var(--primary);}
+.verifyBtn{padding:11px 24px;border-radius:2px;background:var(--primary);color:var(--paper);text-decoration:none;font-weight:600;font-size:13.5px;transition:.3s;}
+.verifyBtn:hover{background:var(--primary-dark);}
+.navToggle{display:none;background:none;border:1px solid var(--border);color:var(--text);font-size:16px;width:40px;height:40px;border-radius:2px;cursor:pointer;}
+.navRight{display:flex;align-items:center;}
+.themeToggle{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:.3s;margin-left:14px;}
+.themeToggle:hover{border-color:var(--secondary);color:var(--secondary);}
+
+@media(max-width:860px){
+  nav ul{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:rgba(13,18,16,.97);border-bottom:1px solid var(--border);}
+  nav ul.open{display:flex;}
+  nav ul li a{display:block;padding:16px 8%;}
+  .navToggle{display:flex;align-items:center;justify-content:center;}
+}
+
+/* hero */
+.hero{
+  min-height:42vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;
+  padding:180px 8% 60px;
+}
+.case-tag{
+  font-family:'IBM Plex Mono';font-size:12px;letter-spacing:3px;color:var(--primary);
+  display:flex;align-items:center;gap:10px;margin-bottom:26px;
+}
+.case-tag::before{content:"";width:8px;height:8px;background:var(--primary);border-radius:50%;display:inline-block;}
+.hero h1{
+  font-family:'Fraunces',serif;font-weight:700;font-size:52px;line-height:1.12;letter-spacing:-1px;max-width:800px;
+}
+.hero h1 span{color:var(--secondary);font-style:italic;font-weight:500;}
+.hero p{
+  margin-top:26px;color:var(--muted);font-size:16px;line-height:1.8;max-width:640px;
+}
+
+section{padding:0 8% 100px;}
+
+/* contact layout */
+.contactWrap{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1.2fr;gap:1px;
+  background:var(--border);border:1px solid var(--border);
+}
+.contactInfo{background:var(--bg);padding:44px 40px;}
+.contactInfo h3{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin-bottom:24px;}
+.contactItem{display:flex;gap:16px;align-items:flex-start;margin-bottom:26px;}
+.contactItem i{color:var(--primary);font-size:16px;margin-top:3px;width:20px;}
+.contactItem span{display:block;color:var(--muted);font-size:12px;font-family:'IBM Plex Mono';letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.contactItem p{font-size:14.5px;color:var(--text);}
+.socials{display:flex;gap:14px;margin-top:30px;}
+.socials a{width:38px;height:38px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text);transition:.3s;}
+.socials a:hover{border-color:var(--primary);color:var(--primary);}
+
+.contactForm{background:var(--card);padding:44px 40px;}
+.contactForm h3{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin-bottom:24px;}
+.field{margin-bottom:20px;}
+.field label{display:block;font-size:12px;font-family:'IBM Plex Mono';letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.field input,.field textarea{
+  width:100%;padding:13px 16px;background:var(--bg);border:1px solid var(--border);border-radius:2px;
+  color:var(--text);font-family:'Inter',sans-serif;font-size:14.5px;resize:vertical;
+}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--secondary);}
+.field textarea{min-height:120px;}
+.submitBtn{
+  padding:14px 34px;background:var(--primary);color:var(--paper);border:none;border-radius:2px;
+  font-weight:600;font-size:14px;cursor:pointer;transition:.3s;font-family:'Inter',sans-serif;
+}
+.submitBtn:hover{background:var(--primary-dark);}
+.formNote{margin-top:16px;font-size:12.5px;color:var(--muted);font-family:'IBM Plex Mono';display:none;}
+.formNote.show{display:block;}
+
+footer{padding:50px 8%;text-align:center;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;font-family:'IBM Plex Mono';}
+footer a{color:var(--secondary);text-decoration:none;}
+
+@media(max-width:760px){
+  .hero h1{font-size:32px;}
+  .contactWrap{grid-template-columns:1fr;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;}
+}
+
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <a href="index.html" class="logo">
+    Trustify <span>AI</span>
+    <small>VERIFY • EXPLAIN • TRUST</small>
+</a>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="platform.html">Platform</a></li>
+    <li><a href="upload.html">Verify</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <div class="navRight">
+    <a href="upload.html" class="verifyBtn">Start Verification</a>
+    <button class="themeToggle" id="themeToggle" title="Toggle dark / light mode"><i class="fa-solid fa-moon"></i></button>
+    <button class="navToggle" aria-label="Toggle menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- hero -->
+<section class="hero">
+  <div class="case-tag">CASE FILE — GET IN TOUCH</div>
+  <h1>Questions, Feedback<br>or <span>Collaboration</span></h1>
+  <p>Reach out about the project, report an issue, or just say hello. We read every message.</p>
+</section>
+
+<!-- contact -->
+<section>
+  <div class="contactWrap">
+    <div class="contactInfo">
+      <h3>Contact Details</h3>
+      <div class="contactItem">
+        <i class="fa-solid fa-envelope"></i>
+        <div><span>Email</span><p>team.trustifyai@gmail.com</p></div>
+      </div>
+      <div class="contactItem">
+        <i class="fa-solid fa-building-columns"></i>
+        <div><span>Institution</span><p>SJBIT — Dept. of Computer Science & Engineering (Data Science)</p></div>
+      </div>
+      <div class="contactItem">
+        <i class="fa-solid fa-location-dot"></i>
+        <div><span>Location</span><p>Bengaluru, Karnataka, India</p></div>
+      </div>
+      <div class="socials">
+        <a href="#"><i class="fab fa-github"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fas fa-globe"></i></a>
+      </div>
+    </div>
+    <div class="contactForm">
+      <h3>Send a Message</h3>
+      <form id="contactFormEl">
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" required>
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" required></textarea>
+        </div>
+        <button type="submit" class="submitBtn">Send Message</button>
+        <div class="formNote" id="formNote">Thanks — this is a demo form, so nothing was actually sent. Email us directly instead.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2026 Trustify AI · <a href="index.html">Home</a> · CASE LOG STATUS: ACTIVE
+</footer>
+
+<script>
+(function initTheme(){
+  const saved=localStorage.getItem("trustifyTheme")||"dark";
+  document.documentElement.setAttribute("data-theme",saved);
+  updateThemeIcon(saved);
+})();
+function updateThemeIcon(theme){
+  const btn=document.getElementById("themeToggle");
+  if(!btn) return;
+  btn.innerHTML=theme==="light"?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>';
+}
+document.getElementById("themeToggle").onclick=function(){
+  const current=document.documentElement.getAttribute("data-theme")||"dark";
+  const next=current==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  localStorage.setItem("trustifyTheme",next);
+  updateThemeIcon(next);
+};
+
+const navToggle=document.querySelector(".navToggle");
+const navList=document.querySelector("nav ul");
+navToggle.addEventListener("click",()=>{
+  const isOpen=navList.classList.toggle("open");
+  navToggle.setAttribute("aria-expanded",isOpen);
+});
+navList.querySelectorAll("a").forEach(link=>{
+  link.addEventListener("click",()=>{
+    navList.classList.remove("open");
+    navToggle.setAttribute("aria-expanded","false");
+  });
+});
+
+// Mouse Glow Effect
+const glow=document.createElement("div");
+glow.style.position="fixed";
+glow.style.width="420px";
+glow.style.height="420px";
+glow.style.borderRadius="50%";
+glow.style.pointerEvents="none";
+glow.style.background="radial-gradient(circle,rgba(92,139,129,.10),transparent 70%)";
+glow.style.transform="translate(-50%,-50%)";
+glow.style.zIndex="-1";
+document.body.appendChild(glow);
+document.addEventListener("mousemove",(e)=>{
+  glow.style.left=e.clientX+"px";
+  glow.style.top=e.clientY+"px";
+});
+
+document.getElementById("contactFormEl").addEventListener("submit",function(e){
+  e.preventDefault();
+  document.getElementById("formNote").classList.add("show");
+  this.reset();
+});
+</script>
+
+</body>
+</html>
