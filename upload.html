@@ -557,6 +557,9 @@
 
           <!-- METADATA TAB -->
           <div class="tabContent" id="metadata">
+            <div class="metadataStatus" id="metadataStatus">
+                Metadata not analyzed
+            </div>
             <div class="metaGrid">
               <div class="metaItem"><h4>Camera</h4><p id="metaCamera">Not Available</p></div>
               <div class="metaItem"><h4>Software</h4><p id="metaSoftware">Not Available</p></div>
@@ -1008,23 +1011,11 @@
   });
 
   /* EXIF READER */
-  function readEXIF(file) {
-    EXIF.getData(file, function () {
-      const camera = EXIF.getTag(this, "Model") || "Not Available";
-      const software = EXIF.getTag(this, "Software") || "Not Available";
-      const date = EXIF.getTag(this, "DateTimeOriginal") || "Not Available";
-      const gps = EXIF.getTag(this, "GPSLatitude") ? "Available" : "Not Available";
-      const orientation = EXIF.getTag(this, "Orientation") || "Unknown";
-      const color = EXIF.getTag(this, "ColorSpace") || "Unknown";
-
-      document.getElementById("metaCamera").textContent = camera;
-      document.getElementById("metaSoftware").textContent = software;
-      document.getElementById("metaDate").textContent = date;
-      document.getElementById("metaGPS").textContent = gps;
-      document.getElementById("metaOrientation").textContent = orientation;
-      document.getElementById("metaColor").textContent = color;
-    });
-  }
+ function readEXIF(file) {
+  // Metadata is extracted by the Flask backend after analysis.
+  // This function is kept only to avoid breaking the existing upload flow.
+  // The actual metadata values are populated by renderMetadata().
+}
 
   /* RGB HISTOGRAM */
   function drawHistogram(image) {
@@ -1192,6 +1183,45 @@
   }
 
   document.getElementById("analyzeBtnTab").onclick = startAnalysis;
+  function renderMetadata(metadata) {
+  if (!metadata) {
+    return;
+  }
+
+  const statusElement = document.getElementById("metadataStatus");
+
+  if (metadata.exif_present) {
+    statusElement.textContent = "EXIF metadata detected";
+    statusElement.className = "metadataStatus available";
+  } else {
+    statusElement.textContent = "No EXIF metadata found";
+    statusElement.className = "metadataStatus unavailable";
+  }
+
+  document.getElementById("metaCamera").textContent =
+    metadata.camera || "Not Available";
+
+  document.getElementById("metaSoftware").textContent =
+    metadata.software || "Not Available";
+
+  document.getElementById("metaDate").textContent =
+    metadata.date_taken || "Not Available";
+
+  document.getElementById("metaGPS").textContent =
+    metadata.gps || "Not Available";
+
+  document.getElementById("metaColor").textContent =
+    metadata.color_space || "Unknown";
+
+  document.getElementById("metaOrientation").textContent =
+    metadata.orientation || "Unknown";
+
+  document.getElementById("metaCompression").textContent =
+    metadata.compression || "Unknown";
+
+  document.getElementById("metaBitDepth").textContent =
+    metadata.bit_depth || "Unknown";
+}
 
   /* RENDER RESULTS */
   function renderResult(result) {
@@ -1238,7 +1268,8 @@
     if (result.heatmap_url) {
       heatmapImage.src = result.heatmap_url;
     }
-
+    // Render backend-extracted metadata
+    renderMetadata(result.metadata);
     reasonList.innerHTML = "";
     reportReasons.innerHTML = "";
     result.reasons.forEach(text => {

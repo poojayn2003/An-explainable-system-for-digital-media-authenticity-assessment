@@ -1,121 +1,19 @@
+"""
+Trustify AI - Grad-CAM Explainability
+
+Reusable Grad-CAM implementation for:
+1. CIFAKE EfficientNet-B0
+2. CASIA EfficientNet-B0
+
+The module does NOT load models by itself.
+Models are supplied by predict.py.
+"""
+
 import os
-import sys
+
 import cv2
 import numpy as np
 import torch
-import torch.nn as nn
-
-from PIL import Image
-
-from torchvision import transforms
-from torchvision.models import (
-    efficientnet_b0,
-    EfficientNet_B0_Weights
-)
-
-
-# ============================================================
-# CONFIGURATION
-# ============================================================
-
-MODEL_PATH = "models/efficientnet_best.pth"
-
-OUTPUT_DIR = "outputs/gradcam"
-
-IMG_SIZE = 224
-
-CLASS_NAMES = {
-    0: "AI-GENERATED",
-    1: "REAL"
-}
-
-
-# ============================================================
-# DEVICE
-# ============================================================
-
-device = torch.device(
-    "cuda" if torch.cuda.is_available() else "cpu"
-)
-
-print("=" * 60)
-print("TRUSTIFY AI - GRAD-CAM EXPLAINABILITY")
-print("=" * 60)
-
-print(f"Device: {device}")
-
-if torch.cuda.is_available():
-    print(f"GPU: {torch.cuda.get_device_name(0)}")
-
-
-# ============================================================
-# CHECK MODEL
-# ============================================================
-
-if not os.path.exists(MODEL_PATH):
-
-    print("\nERROR: Trained model not found!")
-    print(f"Path: {MODEL_PATH}")
-    sys.exit(1)
-
-
-# ============================================================
-# LOAD MODEL
-# ============================================================
-
-print("\nLoading EfficientNet-B0...")
-
-weights = EfficientNet_B0_Weights.DEFAULT
-
-model = efficientnet_b0(
-    weights=weights
-)
-
-in_features = model.classifier[1].in_features
-
-model.classifier[1] = nn.Linear(
-    in_features,
-    2
-)
-
-
-print("Loading trained model...")
-
-state_dict = torch.load(
-    MODEL_PATH,
-    map_location=device,
-    weights_only=True
-)
-
-model.load_state_dict(state_dict)
-
-model = model.to(device)
-
-model.eval()
-
-print("✓ Model loaded successfully")
-
-
-# ============================================================
-# TRANSFORM
-# ============================================================
-
-imagenet_mean = weights.transforms().mean
-imagenet_std = weights.transforms().std
-
-transform = transforms.Compose([
-
-    transforms.Resize(
-        (IMG_SIZE, IMG_SIZE)
-    ),
-
-    transforms.ToTensor(),
-
-    transforms.Normalize(
-        mean=imagenet_mean,
-        std=imagenet_std
-    )
-])
 
 
 # ============================================================
@@ -132,53 +30,57 @@ class GradCAM:
         self.activations = None
         self.gradients = None
 
-        target_layer.register_forward_hook(
+        # Save forward activations
+        self.forward_handle = target_layer.register_forward_hook(
             self.save_activation
         )
 
-        target_layer.register_full_backward_hook(
+        # Save backward gradients
+        self.backward_handle = target_layer.register_full_backward_hook(
             self.save_gradient
         )
 
+    # --------------------------------------------------------
+    # Save activation
+    # --------------------------------------------------------
 
-    def save_activation(
-        self,
-        module,
-        input,
-        output
-    ):
+    def save_activation(self, module, input, output):
 
         self.activations = output
 
+    # --------------------------------------------------------
+    # Save gradient
+    # --------------------------------------------------------
 
-    def save_gradient(
-        self,
-        module,
-        grad_input,
-        grad_output
-    ):
+    def save_gradient(self, module, grad_input, grad_output):
 
         self.gradients = grad_output[0]
 
+    # --------------------------------------------------------
+    # Generate Grad-CAM
+    # --------------------------------------------------------
 
-    def generate(
-        self,
-        image_tensor,
-        target_class
-    ):
+    def generate(self, image_tensor, target_class):
 
         self.model.zero_grad()
 
-        output = self.model(
-            image_tensor
-        )
+        # IMPORTANT:
+        # Do not use torch.no_grad() here.
+        output = self.model(image_tensor)
 
-        score = output[
-            0,
-            target_class
-        ]
+        target_score = output[0, target_class]
 
-        score.backward()
+        target_score.backward()
+
+        if self.activations is None:
+            raise RuntimeError(
+                "Grad-CAM activation was not captured."
+            )
+
+        if self.gradients is None:
+            raise RuntimeError(
+                "Grad-CAM gradients were not captured."
+            )
 
         activations = self.activations
         gradients = self.gradients
@@ -213,7 +115,12 @@ class GradCAM:
         # Convert to NumPy
         # ----------------------------------------------------
 
-        cam = cam.squeeze().detach().cpu().numpy()
+        cam = (
+            cam.squeeze()
+            .detach()
+            .cpu()
+            .numpy()
+        )
 
         # ----------------------------------------------------
         # Normalize
@@ -221,46 +128,57 @@ class GradCAM:
 
         cam -= cam.min()
 
-        if cam.max() > 0:
+        max_value = cam.max()
 
-            cam /= cam.max()
+        if max_value > 0:
+            cam /= max_value
 
         return cam
 
+    # --------------------------------------------------------
+    # Remove hooks
+    # --------------------------------------------------------
 
-# ============================================================
-# IMAGE PROCESSING
-# ============================================================
+    def remove_hooks(self):
 
-def load_image(image_path):
-
-    if not os.path.exists(image_path):
-
-        print("\nERROR: Image not found!")
-        print(f"Path: {image_path}")
-
-        sys.exit(1)
-
-    image = Image.open(
-        image_path
-    ).convert("RGB")
-
-    return image
+        self.forward_handle.remove()
+        self.backward_handle.remove()
 
 
 # ============================================================
-# GENERATE HEATMAP
+# CREATE HEATMAP
 # ============================================================
 
 def create_heatmap(
     original_image,
-    cam
+    cam,
+    alpha=0.45
 ):
+    """
+    Create a Grad-CAM heatmap overlay.
 
-    original = np.array(
-        original_image
-    )
+    Parameters
+    ----------
+    original_image : PIL Image or NumPy RGB image
+    cam : NumPy array
+        Grad-CAM activation map.
+    alpha : float
+        Heatmap blending strength.
 
+    Returns
+    -------
+    overlay : NumPy BGR image
+    """
+
+    # PIL Image -> NumPy
+    if hasattr(original_image, "convert"):
+        original = np.array(
+            original_image.convert("RGB")
+        )
+    else:
+        original = original_image
+
+    # RGB -> BGR for OpenCV
     original = cv2.cvtColor(
         original,
         cv2.COLOR_RGB2BGR
@@ -268,25 +186,29 @@ def create_heatmap(
 
     height, width = original.shape[:2]
 
+    # Resize CAM to original image size
     cam = cv2.resize(
         cam,
         (width, height)
     )
 
+    # Convert to 8-bit
     heatmap = np.uint8(
         255 * cam
     )
 
+    # Apply color map
     heatmap = cv2.applyColorMap(
         heatmap,
         cv2.COLORMAP_JET
     )
 
+    # Blend original + heatmap
     overlay = cv2.addWeighted(
         original,
-        0.55,
+        1 - alpha,
         heatmap,
-        0.45,
+        alpha,
         0
     )
 
@@ -294,209 +216,39 @@ def create_heatmap(
 
 
 # ============================================================
-# MAIN PREDICTION + GRAD-CAM
+# SAVE HEATMAP
 # ============================================================
 
-def analyze_image(image_path):
+def save_heatmap(
+    original_image,
+    cam,
+    output_path
+):
+    """
+    Generate and save Grad-CAM overlay.
+    """
 
-    print("\n" + "-" * 60)
+    output_dir = os.path.dirname(output_path)
 
-    print(
-        f"Analyzing: {image_path}"
-    )
-
-    print("-" * 60)
-
-
-    # --------------------------------------------------------
-    # Load image
-    # --------------------------------------------------------
-
-    original_image = load_image(
-        image_path
-    )
-
-
-    # --------------------------------------------------------
-    # Transform image
-    # --------------------------------------------------------
-
-    image_tensor = transform(
-        original_image
-    ).unsqueeze(0)
-
-    image_tensor = image_tensor.to(
-        device
-    )
-
-
-    # --------------------------------------------------------
-    # Prediction
-    # --------------------------------------------------------
-
-    model.zero_grad()
-
-    output = model(
-        image_tensor
-    )
-
-    probabilities = torch.softmax(
-        output,
-        dim=1
-    )
-
-    predicted_class = torch.argmax(
-        probabilities,
-        dim=1
-    ).item()
-
-    confidence = probabilities[
-        0,
-        predicted_class
-    ].item()
-
-
-    fake_probability = probabilities[
-        0,
-        0
-    ].item()
-
-    real_probability = probabilities[
-        0,
-        1
-    ].item()
-
-
-    prediction = CLASS_NAMES[
-        predicted_class
-    ]
-
-
-    # --------------------------------------------------------
-    # RESULT
-    # --------------------------------------------------------
-
-    print("\nRESULT")
-
-    print("=" * 60)
-
-    print(
-        f"Prediction : {prediction}"
-    )
-
-    print(
-        f"Confidence : "
-        f"{confidence * 100:.2f}%"
-    )
-
-    print(
-        f"FAKE probability : "
-        f"{fake_probability * 100:.2f}%"
-    )
-
-    print(
-        f"REAL probability : "
-        f"{real_probability * 100:.2f}%"
-    )
-
-    print("=" * 60)
-
-
-    # --------------------------------------------------------
-    # GRAD-CAM TARGET LAYER
-    # --------------------------------------------------------
-
-    target_layer = model.features[-1]
-
-
-    # --------------------------------------------------------
-    # Generate Grad-CAM
-    # --------------------------------------------------------
-
-    print(
-        "\nGenerating Grad-CAM..."
-    )
-
-    gradcam = GradCAM(
-        model,
-        target_layer
-    )
-
-    cam = gradcam.generate(
-        image_tensor,
-        predicted_class
-    )
-
-
-    # --------------------------------------------------------
-    # Create overlay
-    # --------------------------------------------------------
+    if output_dir:
+        os.makedirs(
+            output_dir,
+            exist_ok=True
+        )
 
     overlay = create_heatmap(
         original_image,
         cam
     )
 
-
-    # --------------------------------------------------------
-    # Save output
-    # --------------------------------------------------------
-
-    os.makedirs(
-        OUTPUT_DIR,
-        exist_ok=True
-    )
-
-    filename = os.path.basename(
-        image_path
-    )
-
-    name, _ = os.path.splitext(
-        filename
-    )
-
-    output_path = os.path.join(
-        OUTPUT_DIR,
-        f"{name}_gradcam.jpg"
-    )
-
-    cv2.imwrite(
+    success = cv2.imwrite(
         output_path,
         overlay
     )
 
-
-    print(
-        "\n✓ Grad-CAM generated successfully!"
-    )
-
-    print(
-        f"Saved to: {output_path}"
-    )
-
-
-# ============================================================
-# COMMAND LINE
-# ============================================================
-
-if __name__ == "__main__":
-
-    if len(sys.argv) < 2:
-
-        print(
-            "\nUsage:"
+    if not success:
+        raise RuntimeError(
+            f"Could not save Grad-CAM image: {output_path}"
         )
 
-        print(
-            'python inference\\gradcam.py "path\\to\\image.jpg"'
-        )
-
-        sys.exit(1)
-
-
-    image_path = sys.argv[1]
-
-    analyze_image(
-        image_path
-    )
-
+    return output_path
