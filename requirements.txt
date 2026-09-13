@@ -1,7 +1,6 @@
 flask
 flask-cors
-# add as you wire in real inference:
-# tensorflow
-# opencv-python
-# pillow
-# numpy
+torch
+torchvision
+pillow
+numpy

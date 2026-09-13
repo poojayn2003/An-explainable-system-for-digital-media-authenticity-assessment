@@ -1,0 +1,35 @@
+# Datasets
+datasets/
+
+# Model weights
+*.pth
+*.pt
+*.ckpt
+*.onnx
+
+# Generated outputs
+outputs/
+
+# Uploaded files
+backend/uploads/
+
+# Python cache
+__pycache__/
+*/__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment/secrets
+.env
+
+# Temporary downloads/files
+_downloads/
+*.tmp
+*.temp
