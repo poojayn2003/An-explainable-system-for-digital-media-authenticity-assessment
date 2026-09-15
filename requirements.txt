@@ -4,3 +4,6 @@ torch
 torchvision
 pillow
 numpy
+opencv-python
+scikit-learn
+requests
