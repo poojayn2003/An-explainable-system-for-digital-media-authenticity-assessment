@@ -262,8 +262,6 @@ def analyze():
                 str(temp_path),
                 original_filename=uploaded.filename
             )
-            metadata = extract_metadata(str(temp_path))
-
         finally:
 
             # --------------------------------------------------
